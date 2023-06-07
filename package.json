@@ -3,6 +3,10 @@
   "displayName": "serial terminal",
   "publisher": "awsxxf",
   "description": "An interactive serial terminal tool",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AWSXXF/vscode-serial-terminal.git"
+  },
   "icon": "./assets/logo.png",
   "pricing": "Free",
   "version": "0.0.2",
