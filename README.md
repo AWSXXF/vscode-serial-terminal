@@ -6,7 +6,7 @@ This is a simple terminal interaction serial extension for vscode, it is still a
 
 ## Tutorials
 
-![](assets\statusBar.png)
+![](assets/statusBar.png)
 
 Once you have installed the extension, there will be an entry for serial terminal in the status bar at the bottom left of vscode, click on it and you will know what to do, start enjoying it!
 
