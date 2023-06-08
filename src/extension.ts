@@ -42,8 +42,8 @@ export function activate(context: vscode.ExtensionContext) {
 			port.on("data", (data: Buffer) => {
 				writeEmitter.fire(data.toString());
 			});
-
 			terminal.show();
+
 		}
 	});
 

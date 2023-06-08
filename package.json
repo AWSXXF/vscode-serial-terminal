@@ -9,9 +9,9 @@
   },
   "icon": "./assets/logo.png",
   "pricing": "Free",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "engines": {
-    "vscode": "^1.78.0"
+    "vscode": "^1.74.0"
   },
   "categories": [
     "Other"
@@ -40,7 +40,7 @@
     "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "16.x",
-    "@types/vscode": "^1.78.0",
+    "@types/vscode": "^1.74.0",
     "@typescript-eslint/eslint-plugin": "^5.59.1",
     "@typescript-eslint/parser": "^5.59.1",
     "@vscode/test-electron": "^2.3.0",
