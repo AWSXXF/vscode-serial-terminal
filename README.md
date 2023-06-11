@@ -20,10 +20,10 @@ Implementation of the most basic functions for opening the serial port and inter
 
 ## Future features
 
-- Implementing sending and receiving hexadecimal data
+- Serial port to send and display hex data
 
-- Implementation of logging
+- Logger for logs
 
-- Implementing a running script
+- Running the send script
 
-- Implementing configuration items
+- Add configurable items

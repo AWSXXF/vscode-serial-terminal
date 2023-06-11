@@ -7,7 +7,11 @@
     "type": "git",
     "url": "https://github.com/AWSXXF/vscode-serial-terminal.git"
   },
+  "bugs": {
+    "url": "https://github.com/AWSXXF/vscode-serial-terminal/issues"
+  },
   "icon": "./assets/logo.png",
+  "l10n": "./l10n",
   "pricing": "Free",
   "version": "0.0.5",
   "engines": {
@@ -17,17 +21,52 @@
     "Other"
   ],
   "activationEvents": [
-    "*"
+    "onStartupFinished"
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "entryView",
+          "title": "%entryView.title%",
+          "icon": "$(debug-disconnect)"
+        }
+      ]
+    },
+    "views": {
+      "entryView": [
+        {
+          "name": "%TreeView.serialPort%",
+          "id": "serialport.serialportView"
+        }
+      ]
+    },
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "serialTerminal.openSerialPort",
+          "when": "view == serialport.serialportView",
+          "group": "inline"
+        }
+      ]
+    },
     "commands": [
       {
-        "command": "serialport.openSerialTerminal",
-        "title": "open serial terminal"
+        "command": "serialTerminal.openSerialPort",
+        "icon": "$(arrow-right)",
+        "title": "%commands.openSerialTerminal%"
       }
     ]
   },
+  "keywords": [
+    "serial port",
+    "serial",
+    "com",
+    "terminal",
+    "console",
+    "uart"
+  ],
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
@@ -43,6 +82,7 @@
     "@types/vscode": "^1.74.0",
     "@typescript-eslint/eslint-plugin": "^5.59.1",
     "@typescript-eslint/parser": "^5.59.1",
+    "@vscode/l10n-dev": "^0.0.26",
     "@vscode/test-electron": "^2.3.0",
     "electron": "^25.0.1",
     "eslint": "^8.39.0",
@@ -51,6 +91,8 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
+    "@vscode/l10n": "^0.0.14",
+    "colors": "^1.4.0",
     "node-gyp": "^9.3.1",
     "serialport": "^11.0.0"
   }

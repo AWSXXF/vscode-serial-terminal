@@ -1,0 +1,7 @@
+{
+    "entryView.title": "serial port resource manager",
+    "TreeView.serialPort": "available serial port",
+    "TreeView.scripts": "scripts",
+    "commands.openSerialTerminal": "open serial terminal",
+    "commands.openSerialTerminalWithLog": "open serial terminal and catch log"
+}

@@ -1,0 +1,7 @@
+{
+    "entryView.title": "串口资源管理器",
+    "TreeView.serialPort": "可用串口",
+    "TreeView.scripts": "脚本",
+    "commands.openSerialTerminal": "打开串口终端",
+    "commands.openSerialTerminalWithLog": "打开串口终端并抓取log"
+}

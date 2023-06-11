@@ -1,0 +1,9 @@
+{
+  "please select a serial port": "请选择一个串口",
+  "please select a boud rate": "请选择一个波特率",
+  "({0}) CONNECTED\r\n\r\n": "{0} 已连接\r\n\r\n",
+  "({0}) OPEN FAILED! \r\n\r\n": "{0} 打开失败! \r\n\r\n",
+  "({0}) CLOSED! \r\n\r\n": "{0} 已断开! \r\n\r\n",
+  "$(plug) Serial Terminal": "$(plug) 串口终端",
+  "Open a serial port on terminal": "在终端打开一个串口"
+}
