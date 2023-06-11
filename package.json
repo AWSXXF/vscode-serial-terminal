@@ -13,7 +13,7 @@
   "icon": "./assets/logo.png",
   "l10n": "./l10n",
   "pricing": "Free",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "engines": {
     "vscode": "^1.74.0"
   },
