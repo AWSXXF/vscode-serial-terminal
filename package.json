@@ -12,6 +12,14 @@
   },
   "icon": "./assets/logo.png",
   "l10n": "./l10n",
+  "keywords": [
+    "serial port",
+    "serial",
+    "com",
+    "terminal",
+    "console",
+    "uart"
+  ],
   "pricing": "Free",
   "version": "0.0.6",
   "engines": {
@@ -43,11 +51,23 @@
       ]
     },
     "menus": {
+      "view/title": [
+        {
+          "command": "serialport.refreshView",
+          "when": "view == serialport.serialportView",
+          "group": "navigation@2"
+        },
+        {
+          "command": "serialport.openSerialPortConfigaration",
+          "when": "view == serialport.serialportView",
+          "group": "navigation@1"
+        }
+      ],
       "view/item/context": [
         {
           "command": "serialTerminal.openSerialPort",
           "when": "view == serialport.serialportView",
-          "group": "inline"
+          "group": "inline@2"
         }
       ]
     },
@@ -56,17 +76,53 @@
         "command": "serialTerminal.openSerialPort",
         "icon": "$(arrow-right)",
         "title": "%commands.openSerialTerminal%"
+      },
+      {
+        "command": "serialTerminal.openSerialPortWithLog",
+        "icon": "$(file-add)",
+        "title": "%commands.openSerialTerminalWithLog%"
+      },
+      {
+        "command": "serialport.refreshView",
+        "icon": "$(sync)",
+        "title": "%commands.refreshView%"
+      },
+      {
+        "command": "serialport.openSerialPortConfigaration",
+        "icon": "$(gear)",
+        "title": "%commands.openSerialPortConfigaration%"
+      },
+      {
+        "command": "doSomething",
+        "title": "Serial Terminal: do something"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Serial Terminal",
+      "properties": {
+        "SerialTerminal.serial port.Boud Rate": {
+          "type": "array",
+          "title": "?",
+          "default": [
+            115200,
+            9600,
+            19200,
+            38400,
+            76800,
+            153600,
+            460800,
+            921600,
+            2000000
+          ],
+          "items": {
+            "type": "number",
+            "pattern": "^[0-9]$"
+          },
+          "markdownDescription": "%configurations.serialPort.boudRate.description%"
+        }
+      }
+    }
   },
-  "keywords": [
-    "serial port",
-    "serial",
-    "com",
-    "terminal",
-    "console",
-    "uart"
-  ],
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",

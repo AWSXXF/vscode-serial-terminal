@@ -2,6 +2,7 @@ import { SerialPort } from "serialport";
 import { Event, ProviderResult, TreeDataProvider, TreeItem, l10n } from "vscode";
 import * as vscode from "vscode";
 import * as colors from 'colors';
+import { getBoundRates } from "./settingManager";
 
 colors.setTheme({
     silly: 'rainbow',
@@ -81,18 +82,7 @@ export async function pickBoudRate(): Promise<number | undefined> {
 function boudRates(): Thenable<vscode.QuickPickItem[]> {
     return new Promise((resolve, reject) => {
         // 选择波特率
-        const portItems: vscode.QuickPickItem[] =
-            [
-                "115200",
-                "9600",
-                "19200",
-                "38400",
-                "76800",
-                "153600",
-                "460800",
-                "921600",
-                "2000000",
-            ].map((value) => { return { label: value }; });
+        const portItems: vscode.QuickPickItem[] = getBoundRates().map((value) => { return { label: value.toString() }; });
         resolve(portItems);
     });
 }

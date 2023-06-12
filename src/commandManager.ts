@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
-import { l10n } from 'vscode';
-import { pickBoudRate, getSerialPort, openSerialPortTerminal, getSerialPortProvider, pickSerialPort } from './serialPortManager';
+import { pickBoudRate, getSerialPort, openSerialPortTerminal, pickSerialPort } from './serialPortManager';
+import { refreshSerialPortView } from './viewManager';
+import { getBoundRates } from './settingManager';
 
 export function registerCommands() {
     vscode.commands.registerCommand("serialTerminal.openSerialPort", async (context) => {
@@ -14,15 +15,20 @@ export function registerCommands() {
         }
     });
 
-    vscode.commands.registerCommand("serialTerminal.openSerialPortWithLog", (context) => {
+    vscode.commands.registerCommand("serialTerminal.openSerialPortWithLog", (context) => { });
 
+    vscode.commands.registerCommand("serialport.refreshView", refreshSerialPortView);
+
+    vscode.commands.registerCommand("serialport.openSerialPortConfigaration", () => {
+        vscode.commands.executeCommand("workbench.action.openSettings", "SerialTerminal");
     });
 
-    vscode.commands.registerCommand("doSomething", (context) => {
+    vscode.commands.registerCommand("doSomething", async (context) => {
         // vscode.window.showInformationMessage(l10n.t())
+        console.log(getBoundRates());
     });
 
-    let disposable = vscode.commands.registerCommand('serialport.openSerialTerminal', async () => {
+    vscode.commands.registerCommand('serialport.openSerialTervalue:minal', async () => {
         // 获取用户选择的串口设备
         const portPath = await pickSerialPort();
         const boudRate = await pickBoudRate();
@@ -34,12 +40,4 @@ export function registerCommands() {
             }
         }
     });
-
-    let statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 1000);
-    statusBarItem.text = l10n.t("$(plug) Serial Terminal");
-    statusBarItem.tooltip = l10n.t("Open a serial port on terminal");
-    statusBarItem.command = "serialport.openSerialTerminal";
-    statusBarItem.show();
-
-    vscode.window.registerTreeDataProvider("serialport.serialportView", getSerialPortProvider());
 }
