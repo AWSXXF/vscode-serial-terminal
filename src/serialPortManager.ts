@@ -117,6 +117,7 @@ export function openSerialPortTerminal(port: SerialPort) {
             port.write(data);
         }
     };
+    // const terminal = vscode.window.createTerminal({ name: port.path, pty: pty, location: { viewColumn: vscode.ViewColumn.Beside } });
     const terminal = vscode.window.createTerminal({ name: port.path, pty: pty });
 
     port.on("data", (data: Buffer) => {

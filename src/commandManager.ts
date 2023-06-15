@@ -25,10 +25,13 @@ export function registerCommands() {
 
     vscode.commands.registerCommand("doSomething", async (context) => {
         // vscode.window.showInformationMessage(l10n.t())
-        console.log(getBoundRates());
+        // console.log(getBoundRates());
+
+        let result = 0;
+        console.log({ result });
     });
 
-    vscode.commands.registerCommand('serialport.openSerialTervalue:minal', async () => {
+    vscode.commands.registerCommand('serialport.openSerialTerminal', async () => {
         // 获取用户选择的串口设备
         const portPath = await pickSerialPort();
         const boudRate = await pickBoudRate();
