@@ -3,8 +3,9 @@
     "TreeView.serialPort": "available serial port",
     "TreeView.scripts": "scripts",
     "commands.openSerialTerminal": "open serial terminal",
-    "commands.openSerialTerminalWithLog": "open serial terminal and catch log",
     "commands.refreshView": "refresh",
     "commands.openSerialPortConfigaration": "open serial port setting",
+    "commands.startSaveLog": "Save the log of the current terminal",
+    "commands.stopSaveLog": "Stop saving the log of the current terminal",
     "configurations.serialPort.boudRate.description": "The `baud rate` option when opening the serial port, you can add a `custom baud rate` here"
 }

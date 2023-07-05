@@ -2,7 +2,7 @@
   "name": "serialterminal",
   "displayName": "serial terminal",
   "publisher": "awsxxf",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "An interactive serial terminal tool",
   "repository": {
     "type": "git",
@@ -63,8 +63,14 @@
           "group": "navigation@1"
         },
         {
-          "command": "doSomething",
-          "when": "view == terminal"
+          "command": "serialport.startSaveLog",
+          "when": "view == terminal && serialTerminal.serialPortTernimalFocus && !serialTerminal.serialPortTernimalRecordingLog",
+          "group": "navigation"
+        },
+        {
+          "command": "serialport.stopSaveLog",
+          "when": "view == terminal && serialTerminal.serialPortTernimalFocus && serialTerminal.serialPortTernimalRecordingLog",
+          "group": "navigation"
         }
       ],
       "view/item/context": [
@@ -82,11 +88,6 @@
         "title": "%commands.openSerialTerminal%"
       },
       {
-        "command": "serialTerminal.openSerialPortWithLog",
-        "icon": "$(file-add)",
-        "title": "%commands.openSerialTerminalWithLog%"
-      },
-      {
         "command": "serialport.refreshView",
         "icon": "$(sync)",
         "title": "%commands.refreshView%"
@@ -95,6 +96,16 @@
         "command": "serialport.openSerialPortConfigaration",
         "icon": "$(gear)",
         "title": "%commands.openSerialPortConfigaration%"
+      },
+      {
+        "command": "serialport.startSaveLog",
+        "icon": "$(save-as)",
+        "title": "%commands.startSaveLog%"
+      },
+      {
+        "command": "serialport.stopSaveLog",
+        "icon": "$(stop-circle)",
+        "title": "%commands.stopSaveLog%"
       },
       {
         "command": "doSomething",
@@ -127,14 +138,6 @@
       }
     }
   },
-  "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "pretest": "npm run compile && npm run lint",
-    "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
-  },
   "devDependencies": {
     "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.1",
@@ -153,7 +156,6 @@
   "dependencies": {
     "@vscode/l10n": "^0.0.14",
     "colors": "^1.4.0",
-    "node-gyp": "^9.3.1",
     "serialport": "^11.0.0"
   }
 }

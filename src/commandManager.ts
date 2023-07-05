@@ -1,46 +1,111 @@
 import * as vscode from 'vscode';
-import { pickBoudRate, getSerialPort, openSerialPortTerminal, pickSerialPort } from './serialPortManager';
+import * as fs from 'fs';
+import { pickBoudRate, getSerialPort, pickSerialPort } from './serialPortManager';
 import { refreshSerialPortView } from './viewManager';
-import { getBoundRates } from './settingManager';
+import { addSerialTerminal, getSerialPortTerminalFrom } from './terminalManager';
+import { setSerialPortTernimalRecordingLog } from './contextManager';
 
-export function registerCommands() {
-    vscode.commands.registerCommand("serialTerminal.openSerialPort", async (context) => {
-        const portPath = context.label;
-        const boudRate = await pickBoudRate();
-        if (portPath && boudRate) {
-            const port = getSerialPort(portPath, boudRate);
-            if (port) {
-                openSerialPortTerminal(port);
-            }
-        }
-    });
+export function registerCommands(context: vscode.ExtensionContext) {
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            "serialTerminal.openSerialPort",
+            openSerialPort
+        )
+    );
 
-    vscode.commands.registerCommand("serialTerminal.openSerialPortWithLog", (context) => { });
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            'serialport.openSerialTerminal',
+            openSerialPort
+        )
+    );
 
-    vscode.commands.registerCommand("serialport.refreshView", refreshSerialPortView);
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            "serialport.refreshView",
+            refreshSerialPortView
+        )
+    );
 
-    vscode.commands.registerCommand("serialport.openSerialPortConfigaration", () => {
-        vscode.commands.executeCommand("workbench.action.openSettings", "SerialTerminal");
-    });
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            "serialport.openSerialPortConfigaration",
+            () => { vscode.commands.executeCommand("workbench.action.openSettings", "SerialTerminal"); })
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            "serialport.startSaveLog",
+            startSaveLog
+        )
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            "serialport.stopSaveLog",
+            stopSaveLog
+        )
+    );
 
     vscode.commands.registerCommand("doSomething", async (context) => {
-        // vscode.window.showInformationMessage(l10n.t())
-        // console.log(getBoundRates());
-
-        let result = 0;
-        console.log({ result });
-    });
-
-    vscode.commands.registerCommand('serialport.openSerialTerminal', async () => {
-        // 获取用户选择的串口设备
-        const portPath = await pickSerialPort();
-        const boudRate = await pickBoudRate();
-
-        if (portPath && boudRate) {
-            const port = getSerialPort(portPath, boudRate);
-            if (port) {
-                openSerialPortTerminal(port);
+        const saveLogFile = await vscode.window.showSaveDialog({
+            title: "chose a file to save log",
+            filters: {
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                "Log": ["log"]
             }
+        });
+        if (saveLogFile) {
+            fs.writeFileSync(saveLogFile.fsPath, "");
+            fs.appendFileSync(saveLogFile.fsPath, "hello");
         }
     });
+}
+
+async function openSerialPort(context?: any) {
+    let portPath, boudRate;
+    if (!context) {
+        portPath = await pickSerialPort();
+    } else {
+        portPath = context.label;
+    }
+    if (portPath) {
+        boudRate = await pickBoudRate();
+    }
+
+    if (portPath && boudRate) {
+        const port = getSerialPort(portPath, boudRate);
+        if (port) {
+            addSerialTerminal(port);
+        }
+    }
+}
+
+async function startSaveLog() {
+    const terminal = vscode.window.activeTerminal;
+    if (!terminal) {
+        return;
+    }
+
+    const serialPortTerminal = getSerialPortTerminalFrom(terminal);
+    if (!serialPortTerminal) {
+        return;
+    }
+
+    setSerialPortTernimalRecordingLog(await serialPortTerminal.startSave());
+}
+
+function stopSaveLog() {
+    const terminal = vscode.window.activeTerminal;
+
+    if (!terminal) {
+        return;
+    }
+
+    const serialPortTerminal = getSerialPortTerminalFrom(terminal);
+    if (!serialPortTerminal) {
+        return;
+    }
+
+    setSerialPortTernimalRecordingLog(serialPortTerminal.stopSave());
 }

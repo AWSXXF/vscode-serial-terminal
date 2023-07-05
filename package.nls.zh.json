@@ -3,8 +3,9 @@
     "TreeView.serialPort": "可用串口",
     "TreeView.scripts": "脚本",
     "commands.openSerialTerminal": "打开串口终端",
-    "commands.openSerialTerminalWithLog": "打开串口终端并抓取日志",
     "commands.refreshView": "刷新",
     "commands.openSerialPortConfigaration": "打开串口设置",
+    "commands.startSaveLog": "保存当前终端的日志",
+    "commands.stopSaveLog": "停止保存当前终端的日志",
     "configurations.serialPort.boudRate.description": "打开串口时的`波特率`选项，你可以在这里添加`自定义波特率`"
 }

@@ -1,8 +1,8 @@
-import { SerialPort } from "serialport";
-import { Event, ProviderResult, TreeDataProvider, TreeItem, l10n } from "vscode";
 import * as vscode from "vscode";
 import * as colors from 'colors';
 import { getBoundRates } from "./settingManager";
+import { SerialPort } from "serialport";
+import { Event, ProviderResult, TreeDataProvider, TreeItem, l10n } from "vscode";
 
 colors.setTheme({
     silly: 'rainbow',
@@ -17,7 +17,9 @@ colors.setTheme({
     error: 'red'
 });
 
-class SerialPortProvider implements TreeDataProvider<TreeItem> {
+const ports = new Map<string, SerialPort>();
+
+const serialPortProvider = new (class implements TreeDataProvider<TreeItem> {
     onDidChangeTreeData?: Event<void | TreeItem | TreeItem[] | null | undefined> | undefined;
     getTreeItem(element: TreeItem): TreeItem | Thenable<TreeItem> {
         return element;
@@ -42,19 +44,10 @@ class SerialPortProvider implements TreeDataProvider<TreeItem> {
                 });
         });
     }
-    update() {
-
-    }
-}
-
-
-const serialPortProvider: SerialPortProvider = new SerialPortProvider();
+})();
 
 export function getSerialPortProvider(): TreeDataProvider<TreeItem> {
     return serialPortProvider;
-}
-
-export function updateSerialPort() {
 }
 
 export async function pickSerialPort(): Promise<string | undefined> {
@@ -75,58 +68,23 @@ export async function pickSerialPort(): Promise<string | undefined> {
 
 export async function pickBoudRate(): Promise<number | undefined> {
     let boudRate = await vscode.window.showQuickPick(boudRates(), { placeHolder: l10n.t("please select a boud rate") });
-
     return boudRate ? parseInt(boudRate.label) : undefined;
 }
 
 function boudRates(): Thenable<vscode.QuickPickItem[]> {
     return new Promise((resolve, reject) => {
-        // 选择波特率
-        const portItems: vscode.QuickPickItem[] = getBoundRates().map((value) => { return { label: value.toString() }; });
-        resolve(portItems);
+        const boundRateItems: vscode.QuickPickItem[] = getBoundRates().map((value) => { return { label: value.toString() }; });
+        resolve(boundRateItems);
     });
 }
 
 export function getSerialPort(path: string, boudRate: number): SerialPort | undefined {
-
     var getPortSuccess = true;
-
     const port = new SerialPort({ path: path, baudRate: boudRate }, (err) => {
         if (err) {
             getPortSuccess = false;
             vscode.window.showErrorMessage(err.message);
         }
     });
-
     return getPortSuccess ? port : undefined;
-}
-
-export function openSerialPortTerminal(port: SerialPort) {
-    const writeEmitter = new vscode.EventEmitter<string>();
-    const pty: vscode.Pseudoterminal = {
-        onDidWrite: writeEmitter.event,
-        open: () => {
-            if (port.isOpen) {
-                writeEmitter.fire(colors.green.bold(l10n.t('{0} opened successfully!\r\n\r\n', port.path)));
-            } else {
-                writeEmitter.fire(colors.red.bold(l10n.t('{0} open failure! \r\n\r\n', port.path)));
-            }
-        },
-        close: () => { port.close(); },
-        handleInput: (data) => {
-            port.write(data);
-        }
-    };
-    // const terminal = vscode.window.createTerminal({ name: port.path, pty: pty, location: { viewColumn: vscode.ViewColumn.Beside } });
-    const terminal = vscode.window.createTerminal({ name: port.path, pty: pty });
-
-    port.on("data", (data: Buffer) => {
-        writeEmitter.fire(data.toString());
-    });
-
-    port.on("close", () => {
-        writeEmitter.fire(colors.red.bold(l10n.t("({0}) CLOSED! \r\n\r\n", port.path)));
-    });
-
-    terminal.show();
 }

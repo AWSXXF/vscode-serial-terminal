@@ -1,11 +1,12 @@
 import * as vscode from 'vscode';
-import { SerialPort } from 'serialport';
 import { registerCommands } from './commandManager';
 import { registerViews } from './viewManager';
+import { registerContextCallback } from './contextManager';
 
 export function activate(context: vscode.ExtensionContext) {
-	registerCommands();
+	registerCommands(context);
 	registerViews();
+	registerContextCallback();
 }
 
 export function deactivate() { }
