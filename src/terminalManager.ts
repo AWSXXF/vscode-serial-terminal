@@ -22,7 +22,15 @@ class SerialPortTerminal {
             return false;
         }
 
-        const fileUri = await vscode.window.showSaveDialog();
+        const fileUri = await vscode.window.showSaveDialog({
+            filters: {
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                "LOG": [".log"],
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                "TXT": [".txt"],
+            }
+        });
+
         if (!fileUri) {
             return false;
         }
