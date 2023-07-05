@@ -4,13 +4,9 @@ import { getSerialPortTerminalFrom } from './terminalManager';
 
 export function registerContextCallback() {
     vscode.window.onDidChangeActiveTerminal((terminal) => {
-        if (!terminal) {
-            return;
-        }
-
         const serialPortTerminal = getSerialPortTerminalFrom(terminal);
-
         if (!serialPortTerminal) {
+            setSerialPortTernimalFocus(false);
             return;
         } else {
             setSerialPortTernimalFocus(
@@ -23,7 +19,6 @@ export function registerContextCallback() {
         );
     });
 }
-
 
 export function setSerialPortTernimalRecordingLog(value: boolean) {
     vscode.commands.executeCommand(

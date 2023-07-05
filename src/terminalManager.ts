@@ -112,8 +112,13 @@ class SerialPortTerminal {
 
 const serialPortTerminals = new Map<string, SerialPortTerminal>();
 
-export function getSerialPortTerminalFrom(terminal: vscode.Terminal): SerialPortTerminal | undefined {
-    return serialPortTerminals.get(terminal.name);
+export function getSerialPortTerminalFrom(terminal: vscode.Terminal | undefined): SerialPortTerminal | undefined {
+    if (terminal) {
+        return serialPortTerminals.get(terminal.name);
+    } else {
+        return undefined;
+    }
+
 }
 
 export function addSerialTerminal(portOpened: SerialPort) {
