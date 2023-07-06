@@ -25,9 +25,9 @@ class SerialPortTerminal {
         const fileUri = await vscode.window.showSaveDialog({
             filters: {
                 // eslint-disable-next-line @typescript-eslint/naming-convention
-                "LOG": [".log"],
+                "LOG": ["log"],
                 // eslint-disable-next-line @typescript-eslint/naming-convention
-                "TXT": [".txt"],
+                "TXT": ["txt"],
             }
         });
 
@@ -42,7 +42,6 @@ class SerialPortTerminal {
         this.recordingLog = true;
         this.recordingListener = (data) => {
             fs.appendFileSync(filePath, data);
-            this.writeEmitter.fire(data.toString());
         };
         this.port.addListener("data", this.recordingListener);
 
