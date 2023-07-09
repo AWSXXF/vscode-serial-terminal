@@ -5,5 +5,10 @@
   "({0}) OPEN FAILED! \r\n\r\n": "{0} 打开失败! \r\n\r\n",
   "({0}) CLOSED! \r\n\r\n": "{0} 已断开! \r\n\r\n",
   "$(plug) Serial Terminal": "$(plug) 串口终端",
-  "Open a serial port on terminal": "在终端打开一个串口"
+  "Open a serial port on terminal": "在终端打开一个串口",
+  "Log path error: {0}": "日志保存路径错误: {0}",
+  "Only letters, numbers, `_` and `-` are allowed": "仅支持输入字母、数字、`_`和`-`",
+  "Please enter the log file name": "请输入日志文件名",
+  "The logs have been saved in {0}": "日志已经保存在: {0}",
+  "the log path `{0}` no found": "未找到日志保存路径 `{0}`"
 }

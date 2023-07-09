@@ -5,6 +5,8 @@ import * as fs from 'fs';
 import { l10n } from "vscode";
 import { SerialPort } from 'serialport';
 import { getLogUri } from './settingManager';
+import { updateLogProvider } from './logManager';
+import { updateSerialPortProvider } from './serialPortManager';
 
 class SerialPortTerminal {
     portName: string;
@@ -17,7 +19,7 @@ class SerialPortTerminal {
     private active: boolean;
     private recordingLog: boolean;
     private recordingListener: (data: any) => void;
-    private logPath: vscode.Uri | undefined;
+    private logPath: vscode.Uri;
 
     async startSave(): Promise<boolean> {
         if (this.recordingLog) {
@@ -25,8 +27,8 @@ class SerialPortTerminal {
         }
 
         const fileName = await vscode.window.showInputBox({
-            title: "input log file name",
-            value: "normal_" + new Date().toLocaleString('zh', {
+            title: l10n.t("Please enter the log file name"),
+            value: "general_" + new Date().toLocaleString('zh', {
                 year: '2-digit',
                 month: '2-digit',
                 day: '2-digit',
@@ -34,23 +36,20 @@ class SerialPortTerminal {
                 minute: '2-digit',
                 second: '2-digit',
             }).replace(/[\/:]/g, '').replace(/ /g, '_'),
-            valueSelection: [0, 6],
-            prompt: "Only letters, numbers, `_` and `-` are allowed",
-            placeHolder: "placeHolder",
+            valueSelection: [0, 7],
+            prompt: l10n.t("Only letters, numbers, `_` and `-` are allowed"),
             validateInput: (value: string) => {
                 const result = value.match(/^[0-9a-zA-Z_-]*$/g)?.toString();
                 console.log({ result });
-                return result ? undefined : "Only letters, numbers, `_` and `-` are allowed";
+                return result ? undefined : l10n.t("Only letters, numbers, `_` and `-` are allowed");
             }
         });
-
-        console.log(fileName);
 
         if (!fileName) {
             return false;
         }
 
-        const filePath = vscode.Uri.joinPath(getLogUri(), fileName);
+        const filePath = vscode.Uri.joinPath(getLogUri(), fileName + ".log");
         fs.writeFileSync(filePath.fsPath, "");
 
         this.logPath = filePath;
@@ -61,6 +60,8 @@ class SerialPortTerminal {
         };
         this.port.addListener("data", this.recordingListener);
 
+        updateLogProvider();
+
         return true;
     }
 
@@ -68,7 +69,7 @@ class SerialPortTerminal {
         if (this.recordingLog) {
             this.port.removeListener("data", this.recordingListener);
             this.recordingLog = false;
-            vscode.window.showInformationMessage("log save at " + this.logPath?.fsPath);
+            vscode.window.showInformationMessage(l10n.t("The logs have been saved in {0}", this.logPath?.fsPath));
             return true;
         } else {
             return false;
@@ -112,6 +113,7 @@ class SerialPortTerminal {
             close: () => {
                 this.port.close();
                 this.active = false;
+                updateSerialPortProvider();
             },
             handleInput: (data) => {
                 this.port.write(data);
@@ -131,7 +133,7 @@ class SerialPortTerminal {
         this.terminal = vscode.window.createTerminal({ name: this.terminalName, pty: pty });
         this.recordingLog = false;
         this.recordingListener = () => { };
-        this.logPath = undefined;
+        this.logPath = vscode.Uri.file("");
 
         this.terminal.show();
     }

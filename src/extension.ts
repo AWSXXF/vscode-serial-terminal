@@ -12,4 +12,5 @@ export function activate(context: vscode.ExtensionContext) {
 	registerContextCallback();
 }
 
-export function deactivate() { }
+export function deactivate() {
+}

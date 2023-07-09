@@ -6,23 +6,27 @@ This is a simple terminal interaction serial extension for vscode, it is still a
 
 ## Tutorials
 
-![](assets/statusBar.png)
+### open a serial port
 
-Once you have installed the extension, there will be an entry for serial terminal in the status bar at the bottom left of vscode, click on it and you will know what to do, start enjoying it!
+![](assets/gif/open.gif)
 
-## Release Notes
+### start to save the log
 
-### 0.0.1
-
-Implementation of the most basic functions for opening the serial port and interacting with it in the terminal
+![](assets/gif/log.gif)
 
 ---
+
+## Currunt features
+
+- Interact with the serial port like a terminal
+
+- Save adn view the logs
+
+- Configuring a customised open baud rate
 
 ## Future features
 
 - Serial port to send and display hex data
-
-- Logger for logs
 
 - Running the send script
 

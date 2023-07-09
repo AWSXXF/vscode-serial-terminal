@@ -21,7 +21,7 @@ const logProvider = new (class implements vscode.TreeDataProvider<vscode.TreeIte
             try {
                 logs = fs.readdirSync(logDirUri.fsPath);
             } catch (err) {
-                vscode.window.showErrorMessage("Log path error: " + (err as Error).message);
+                vscode.window.showErrorMessage(vscode.l10n.t("Log path error: {0}", (err as Error).message));
             }
 
             if (logs) {
@@ -47,4 +47,3 @@ export function getLogProvider(): vscode.TreeDataProvider<vscode.TreeItem> {
 export function updateLogProvider() {
     logProvider.update();
 }
-

@@ -59,6 +59,19 @@ export function registerCommands(context: vscode.ExtensionContext) {
             stopSaveLog
         )
     );
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            "serialTerminal.viewLog",
+            viewLog
+        )
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            "serialTerminal.revealInExplorer",
+            revealInExplorer
+        )
+    );
 
     vscode.commands.registerCommand("doSomething", async () => {
     });
@@ -116,4 +129,13 @@ function stopSaveLog() {
     }
 
     setSerialPortTernimalRecordingLog(serialPortTerminal.stopSave());
+}
+
+function viewLog(context: vscode.TreeItem) {
+    vscode.commands.executeCommand("vscode.open", context.resourceUri);
+    vscode.commands.executeCommand("workbench.action.files.setActiveEditorReadonlyInSession", context.resourceUri);
+}
+
+function revealInExplorer(context: vscode.TreeItem) {
+    vscode.commands.executeCommand("revealFileInOS", context.resourceUri);
 }

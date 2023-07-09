@@ -91,7 +91,17 @@
         {
           "command": "serialTerminal.openSerialPort",
           "when": "view == serialport.serialportView",
+          "group": "inline"
+        },
+        {
+          "command": "serialTerminal.viewLog",
+          "when": "view == serialport.logs",
           "group": "inline@2"
+        },
+        {
+          "command": "serialTerminal.revealInExplorer",
+          "when": "view == serialport.logs",
+          "group": "inline@1"
         }
       ]
     },
@@ -130,6 +140,16 @@
         "command": "serialport.stopSaveLog",
         "icon": "$(stop-circle)",
         "title": "%commands.stopSaveLog%"
+      },
+      {
+        "icon": "$(arrow-right)",
+        "command": "serialTerminal.viewLog",
+        "title": "%commands.viewLog%"
+      },
+      {
+        "command": "serialTerminal.revealInExplorer",
+        "icon": "$(file-directory)",
+        "title": "%commands.revealInExplorer%"
       },
       {
         "command": "doSomething",

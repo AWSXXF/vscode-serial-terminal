@@ -7,15 +7,20 @@ export function getBoundRates(): Array<number> {
 }
 
 export function getLogUri(): vscode.Uri {
+    const defaultUri = vscode.Uri.joinPath(extensionContext.extensionUri, "log");
+    if (!fs.existsSync(defaultUri.fsPath)) {
+        fs.mkdirSync(defaultUri.fsPath, { recursive: true });
+    }
+
     const logPath = vscode.workspace.getConfiguration().get('SerialTerminal.log.savepath') as string;
     if (logPath === '') {
-        return vscode.Uri.joinPath(extensionContext.extensionUri, "log");
+        return defaultUri;
     }
 
     if (!fs.existsSync(logPath)) {
         vscode.window.showErrorMessage("Log path `" + logPath + "` no found");
         vscode.commands.executeCommand("workbench.action.openSettings", "SerialTerminal.log.savepath");
-        return vscode.Uri.joinPath(extensionContext.extensionUri, "log");
+        return defaultUri;
     }
 
     return vscode.Uri.file(logPath);
