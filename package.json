@@ -2,7 +2,7 @@
   "name": "serialterminal",
   "displayName": "serial terminal",
   "publisher": "awsxxf",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "An interactive serial terminal tool",
   "repository": {
     "type": "git",
@@ -47,19 +47,33 @@
         {
           "name": "%TreeView.serialPort%",
           "id": "serialport.serialportView"
+        },
+        {
+          "name": "log",
+          "id": "serialport.logs"
         }
       ]
     },
     "menus": {
       "view/title": [
         {
-          "command": "serialport.refreshView",
+          "command": "serialport.refreshSerialPortView",
           "when": "view == serialport.serialportView",
           "group": "navigation@2"
         },
         {
           "command": "serialport.openSerialPortConfigaration",
           "when": "view == serialport.serialportView",
+          "group": "navigation@1"
+        },
+        {
+          "command": "serialport.refreshLogView",
+          "when": "view == serialport.logs",
+          "group": "navigation@2"
+        },
+        {
+          "command": "serialport.openLogConfigaration",
+          "when": "view == serialport.logs",
           "group": "navigation@1"
         },
         {
@@ -88,7 +102,12 @@
         "title": "%commands.openSerialTerminal%"
       },
       {
-        "command": "serialport.refreshView",
+        "command": "serialport.refreshSerialPortView",
+        "icon": "$(sync)",
+        "title": "%commands.refreshView%"
+      },
+      {
+        "command": "serialport.refreshLogView",
         "icon": "$(sync)",
         "title": "%commands.refreshView%"
       },
@@ -96,6 +115,11 @@
         "command": "serialport.openSerialPortConfigaration",
         "icon": "$(gear)",
         "title": "%commands.openSerialPortConfigaration%"
+      },
+      {
+        "command": "serialport.openLogConfigaration",
+        "icon": "$(gear)",
+        "title": "%commands.openLogConfigaration%"
       },
       {
         "command": "serialport.startSaveLog",
@@ -134,6 +158,11 @@
             "pattern": "^[0-9]$"
           },
           "markdownDescription": "%configurations.serialPort.boudRate.description%"
+        },
+        "SerialTerminal.log.savepath": {
+          "title": "%configurations.log.savepath.title%",
+          "type": "string",
+          "markdownDescription": "%configurations.log.savepath.description%"
         }
       }
     }
@@ -161,6 +190,7 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
+    "@vscode/codicons": "^0.0.33",
     "@vscode/l10n": "^0.0.14",
     "colors": "^1.4.0",
     "serialport": "^11.0.0"

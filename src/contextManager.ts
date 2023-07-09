@@ -1,10 +1,13 @@
 import * as vscode from 'vscode';
-import { getSerialPortTerminalFrom } from './terminalManager';
+import { getSerialPortTerminalFromTerminal } from './terminalManager';
 
 
 export function registerContextCallback() {
     vscode.window.onDidChangeActiveTerminal((terminal) => {
-        const serialPortTerminal = getSerialPortTerminalFrom(terminal);
+        if (!terminal) {
+            return;
+        }
+        const serialPortTerminal = getSerialPortTerminalFromTerminal(terminal);
         if (!serialPortTerminal) {
             setSerialPortTernimalFocus(false);
             return;

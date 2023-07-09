@@ -1,11 +1,13 @@
 import * as vscode from "vscode";
 import { l10n } from "vscode";
 import { getSerialPortProvider } from "./serialPortManager";
+import { getLogProvider } from "./logManager";
 
 export var serialportView: vscode.TreeView<vscode.TreeItem>;
 
 export function registerViews() {
-    refreshSerialPortView();
+    registerSerialPortView();
+    registerLogView();
 
     let statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 1000);
     statusBarItem.text = l10n.t("$(plug) Serial Terminal");
@@ -14,7 +16,10 @@ export function registerViews() {
     statusBarItem.show();
 }
 
-export function refreshSerialPortView() {
+function registerSerialPortView() {
     vscode.window.registerTreeDataProvider("serialport.serialportView", getSerialPortProvider());
 }
 
+function registerLogView() {
+    vscode.window.registerTreeDataProvider("serialport.logs", getLogProvider());
+}

@@ -7,5 +7,7 @@
     "commands.openSerialPortConfigaration": "打开串口设置",
     "commands.startSaveLog": "保存当前终端的日志",
     "commands.stopSaveLog": "停止保存当前终端的日志",
-    "configurations.serialPort.boudRate.description": "打开串口时的`波特率`选项，你可以在这里添加`自定义波特率`"
+    "configurations.serialPort.boudRate.description": "打开串口时的`波特率`选项，你可以在这里添加`自定义波特率`",
+    "configurations.log.savepath.title": "日志路径",
+    "configurations.log.savepath.description": "设置保存日志目录的路径，例如：`c:\\log`，如果不设置，它将默认为扩展路径中的`log`文件夹"
 }

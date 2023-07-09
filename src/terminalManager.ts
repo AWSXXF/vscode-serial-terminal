@@ -4,6 +4,7 @@ import * as fs from 'fs';
 
 import { l10n } from "vscode";
 import { SerialPort } from 'serialport';
+import { getLogUri } from './settingManager';
 
 class SerialPortTerminal {
     portName: string;
@@ -13,35 +14,50 @@ class SerialPortTerminal {
     private port: SerialPort;
     private terminal: vscode.Terminal;
 
+    private active: boolean;
     private recordingLog: boolean;
     private recordingListener: (data: any) => void;
-    private logPath: string | undefined;
+    private logPath: vscode.Uri | undefined;
 
     async startSave(): Promise<boolean> {
         if (this.recordingLog) {
             return false;
         }
 
-        const fileUri = await vscode.window.showSaveDialog({
-            filters: {
-                // eslint-disable-next-line @typescript-eslint/naming-convention
-                "LOG": ["log"],
-                // eslint-disable-next-line @typescript-eslint/naming-convention
-                "TXT": ["txt"],
+        const fileName = await vscode.window.showInputBox({
+            title: "input log file name",
+            value: "normal_" + new Date().toLocaleString('zh', {
+                year: '2-digit',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+            }).replace(/[\/:]/g, '').replace(/ /g, '_'),
+            valueSelection: [0, 6],
+            prompt: "Only letters, numbers, `_` and `-` are allowed",
+            placeHolder: "placeHolder",
+            validateInput: (value: string) => {
+                const result = value.match(/^[0-9a-zA-Z_-]*$/g)?.toString();
+                console.log({ result });
+                return result ? undefined : "Only letters, numbers, `_` and `-` are allowed";
             }
         });
 
-        if (!fileUri) {
+        console.log(fileName);
+
+        if (!fileName) {
             return false;
         }
 
-        const filePath = fileUri.fsPath;
-        fs.writeFileSync(filePath, "");
+        const filePath = vscode.Uri.joinPath(getLogUri(), fileName);
+        fs.writeFileSync(filePath.fsPath, "");
 
         this.logPath = filePath;
         this.recordingLog = true;
         this.recordingListener = (data) => {
-            fs.appendFileSync(filePath, data);
+            console.log(data.toString());
+            fs.appendFileSync(filePath.fsPath, data.toString());
         };
         this.port.addListener("data", this.recordingListener);
 
@@ -52,7 +68,7 @@ class SerialPortTerminal {
         if (this.recordingLog) {
             this.port.removeListener("data", this.recordingListener);
             this.recordingLog = false;
-            vscode.window.showInformationMessage("log save at " + this.logPath);
+            vscode.window.showInformationMessage("log save at " + this.logPath?.fsPath);
             return true;
         } else {
             return false;
@@ -63,12 +79,21 @@ class SerialPortTerminal {
         return this.port.write(chunk, encoding, cb);
     }
 
+    show() {
+        this.terminal.show();
+    }
+
+    isRunning(): boolean {
+        return this.active;
+    }
+
     isRecordingLog(): boolean {
         return this.recordingLog;
     }
 
     constructor(portOpened: SerialPort) {
         this.port = portOpened;
+        this.active = false;
         this.portName = this.port.path;
         this.terminalName = `PORT: ${this.portName}`;
         this.writeEmitter = new vscode.EventEmitter<string>();
@@ -77,14 +102,16 @@ class SerialPortTerminal {
             onDidWrite: this.writeEmitter.event,
             open: () => {
                 if (this.port.isOpen) {
+                    this.active = true;
                     this.writeEmitter.fire(colors.green.bold(l10n.t('({0}) CONNECTED\r\n\r\n', this.port.path)));
                 } else {
+                    this.active = false;
                     this.writeEmitter.fire(colors.red.bold(l10n.t('({0}) OPEN FAILED! \r\n\r\n', this.port.path)));
                 }
             },
             close: () => {
                 this.port.close();
-                removeSerialTerminal(this.terminalName);
+                this.active = false;
             },
             handleInput: (data) => {
                 this.port.write(data);
@@ -97,6 +124,8 @@ class SerialPortTerminal {
 
         this.port.on("close", () => {
             this.writeEmitter.fire(colors.red.bold(l10n.t("({0}) CLOSED! \r\n\r\n", this.port.path)));
+            removeSerialTerminal(this.terminalName);
+            this.active = false;
         });
 
         this.terminal = vscode.window.createTerminal({ name: this.terminalName, pty: pty });
@@ -111,13 +140,12 @@ class SerialPortTerminal {
 
 const serialPortTerminals = new Map<string, SerialPortTerminal>();
 
-export function getSerialPortTerminalFrom(terminal: vscode.Terminal | undefined): SerialPortTerminal | undefined {
-    if (terminal) {
-        return serialPortTerminals.get(terminal.name);
-    } else {
-        return undefined;
-    }
+export function getSerialPortTerminalFromTerminal(terminal: vscode.Terminal): SerialPortTerminal | undefined {
+    return serialPortTerminals.get(terminal.name);
+}
 
+export function getSerialPortTerminalFromPortName(portName: string): SerialPortTerminal | undefined {
+    return serialPortTerminals.get(`PORT: ${portName}`);
 }
 
 export function addSerialTerminal(portOpened: SerialPort) {

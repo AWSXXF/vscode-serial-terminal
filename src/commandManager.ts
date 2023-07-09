@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
-import * as fs from 'fs';
-import { pickBoudRate, getSerialPort, pickSerialPort } from './serialPortManager';
-import { refreshSerialPortView } from './viewManager';
-import { addSerialTerminal, getSerialPortTerminalFrom } from './terminalManager';
+
+import { pickBoudRate, getSerialPort, pickSerialPort, updateSerialPortProvider } from './serialPortManager';
+import { addSerialTerminal, getSerialPortTerminalFromPortName, getSerialPortTerminalFromTerminal } from './terminalManager';
 import { setSerialPortTernimalRecordingLog } from './contextManager';
+import { updateLogProvider } from './logManager';
 
 export function registerCommands(context: vscode.ExtensionContext) {
     context.subscriptions.push(
@@ -22,15 +22,28 @@ export function registerCommands(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(
         vscode.commands.registerCommand(
-            "serialport.refreshView",
-            refreshSerialPortView
+            "serialport.refreshSerialPortView",
+            updateSerialPortProvider
+        )
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            "serialport.refreshLogView",
+            updateLogProvider
         )
     );
 
     context.subscriptions.push(
         vscode.commands.registerCommand(
             "serialport.openSerialPortConfigaration",
-            () => { vscode.commands.executeCommand("workbench.action.openSettings", "SerialTerminal"); })
+            () => { vscode.commands.executeCommand("workbench.action.openSettings", "SerialTerminal.serial port"); })
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            "serialport.openLogConfigaration",
+            () => { vscode.commands.executeCommand("workbench.action.openSettings", "SerialTerminal.log"); })
     );
 
     context.subscriptions.push(
@@ -47,18 +60,7 @@ export function registerCommands(context: vscode.ExtensionContext) {
         )
     );
 
-    vscode.commands.registerCommand("doSomething", async (context) => {
-        const saveLogFile = await vscode.window.showSaveDialog({
-            title: "chose a file to save log",
-            filters: {
-                // eslint-disable-next-line @typescript-eslint/naming-convention
-                "Log": ["log"]
-            }
-        });
-        if (saveLogFile) {
-            fs.writeFileSync(saveLogFile.fsPath, "");
-            fs.appendFileSync(saveLogFile.fsPath, "hello");
-        }
+    vscode.commands.registerCommand("doSomething", async () => {
     });
 }
 
@@ -70,6 +72,12 @@ async function openSerialPort(context?: any) {
         portPath = context.label;
     }
     if (portPath) {
+        let existTerminal = getSerialPortTerminalFromPortName(portPath);
+        console.log({ existTerminal });
+        if (existTerminal?.isRunning()) {
+            existTerminal.show();
+            return;
+        }
         boudRate = await pickBoudRate();
     }
 
@@ -87,7 +95,7 @@ async function startSaveLog() {
         return;
     }
 
-    const serialPortTerminal = getSerialPortTerminalFrom(terminal);
+    const serialPortTerminal = getSerialPortTerminalFromTerminal(terminal);
     if (!serialPortTerminal) {
         return;
     }
@@ -102,7 +110,7 @@ function stopSaveLog() {
         return;
     }
 
-    const serialPortTerminal = getSerialPortTerminalFrom(terminal);
+    const serialPortTerminal = getSerialPortTerminalFromTerminal(terminal);
     if (!serialPortTerminal) {
         return;
     }

@@ -4,6 +4,7 @@ import { getBoundRates } from "./settingManager";
 import { SerialPort } from "serialport";
 import { Event, ProviderResult, TreeDataProvider, TreeItem, l10n } from "vscode";
 
+
 colors.setTheme({
     silly: 'rainbow',
     input: 'grey',
@@ -20,7 +21,12 @@ colors.setTheme({
 const ports = new Map<string, SerialPort>();
 
 const serialPortProvider = new (class implements TreeDataProvider<TreeItem> {
-    onDidChangeTreeData?: Event<void | TreeItem | TreeItem[] | null | undefined> | undefined;
+    updateEmitter = new vscode.EventEmitter<void>();
+    onDidChangeTreeData: Event<void | TreeItem | TreeItem[] | null | undefined> | undefined = this.updateEmitter.event;
+    update() {
+        this.updateEmitter.fire();
+    }
+
     getTreeItem(element: TreeItem): TreeItem | Thenable<TreeItem> {
         return element;
     }
@@ -29,12 +35,12 @@ const serialPortProvider = new (class implements TreeDataProvider<TreeItem> {
             // 使用 serialport 模块获取可用的串口设备
             SerialPort.list()
                 .then((ports) => {
-                    let treeItem = ports.map((port) => {
+                    const treeItem = ports.map((port) => {
                         return {
                             label: port.path,
                             description: port.manufacturer,
                             tooltip: `PID: ${port.productId} VID: ${port.vendorId}`,
-                            iconPath: '${plug}'
+                            // iconPath: vscode.Uri.joinPath(extensionContext.extensionUri, 'assets/icon/plug.svg')
                         };
                     });
                     resolve(treeItem);
@@ -48,6 +54,10 @@ const serialPortProvider = new (class implements TreeDataProvider<TreeItem> {
 
 export function getSerialPortProvider(): TreeDataProvider<TreeItem> {
     return serialPortProvider;
+}
+
+export function updateSerialPortProvider() {
+    serialPortProvider.update();
 }
 
 export async function pickSerialPort(): Promise<string | undefined> {

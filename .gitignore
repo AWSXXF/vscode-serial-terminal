@@ -1,6 +1,6 @@
 out
 dist
-log
+log/*
 node_modules
 .vscode-test/
 *.vsix

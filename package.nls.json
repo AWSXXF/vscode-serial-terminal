@@ -7,5 +7,7 @@
     "commands.openSerialPortConfigaration": "open serial port setting",
     "commands.startSaveLog": "Save the log of the current terminal",
     "commands.stopSaveLog": "Stop saving the log of the current terminal",
-    "configurations.serialPort.boudRate.description": "The `baud rate` option when opening the serial port, you can add a `custom baud rate` here"
+    "configurations.serialPort.boudRate.description": "The `baud rate` option when opening the serial port, you can add a `custom baud rate` here",
+    "configurations.log.savepath.title": "Log path",
+    "configurations.log.savepath.description": "Set the path to the save log directory. e.g. `c:\\log` if not set, it will default to the `log` folder in the expansion path"
 }
