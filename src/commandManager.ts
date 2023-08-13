@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
 import { pickBoudRate, getSerialPort, pickSerialPort, updateSerialPortProvider } from './serialPortManager';
-import { addSerialTerminal, getSerialPortTerminalFromPortName, getSerialPortTerminalFromTerminal } from './terminalManager';
+import { SerialPortTerminalManager } from './serialPortTerminalManager';
 import { setSerialPortTernimalRecordingLog } from './contextManager';
 import { updateLogProvider } from './logManager';
 
@@ -79,26 +79,24 @@ export function registerCommands(context: vscode.ExtensionContext) {
 
 async function openSerialPort(context?: any) {
     let portPath, boudRate;
+    var serialPortTerminals = SerialPortTerminalManager.getInstance();
     if (!context) {
         portPath = await pickSerialPort();
     } else {
         portPath = context.label;
     }
-    if (portPath) {
-        let existTerminal = getSerialPortTerminalFromPortName(portPath);
-        console.log({ existTerminal });
-        if (existTerminal?.isRunning()) {
-            existTerminal.show();
-            return;
-        }
-        boudRate = await pickBoudRate();
+
+    let existTerminal = serialPortTerminals.getFromPortPath(portPath);
+    if (existTerminal?.isOpen) {
+        existTerminal.show();
+        return;
     }
+    boudRate = await pickBoudRate();
 
     if (portPath && boudRate) {
-        const port = getSerialPort(portPath, boudRate);
-        if (port) {
-            addSerialTerminal(port);
-        }
+        serialPortTerminals.showSerialPortTerminal(portPath, boudRate, () => {
+            updateSerialPortProvider();
+        });
     }
 }
 
@@ -108,12 +106,14 @@ async function startSaveLog() {
         return;
     }
 
-    const serialPortTerminal = getSerialPortTerminalFromTerminal(terminal);
+    const serialPortTerminal = SerialPortTerminalManager.getInstance().getFromTerminal(terminal);
     if (!serialPortTerminal) {
         return;
     }
 
-    setSerialPortTernimalRecordingLog(await serialPortTerminal.startSave());
+    setSerialPortTernimalRecordingLog(await serialPortTerminal.startSaveLog(() => {
+        updateLogProvider();
+    }));
 }
 
 function stopSaveLog() {
@@ -123,7 +123,7 @@ function stopSaveLog() {
         return;
     }
 
-    const serialPortTerminal = getSerialPortTerminalFromTerminal(terminal);
+    const serialPortTerminal = SerialPortTerminalManager.getInstance().getFromTerminal(terminal);
     if (!serialPortTerminal) {
         return;
     }
