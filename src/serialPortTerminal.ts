@@ -131,7 +131,6 @@ export class SerialPortTerminal implements ISerialPortTerminal {
             prompt: l10n.t("Only letters, numbers, `_` and `-` are allowed"),
             validateInput: (value: string) => {
                 const result = value.match(/^[0-9a-zA-Z_-]*$/g)?.toString();
-                console.log({ result });
                 return result ? undefined : l10n.t("Only letters, numbers, `_` and `-` are allowed");
             }
         });
@@ -143,8 +142,7 @@ export class SerialPortTerminal implements ISerialPortTerminal {
 
         fs.writeFileSync(this.logPath.fsPath, "");
         this.recordCallback = (data) => {
-            console.log(data.toString());
-            fs.appendFileSync(this.logPath.fsPath, data.toString());
+            fs.appendFileSync(this.logPath.fsPath, data.toString().replace("\n\r", "\n"));
         };
         this.port.addListener("data", this.recordCallback);
         if (callback) {
