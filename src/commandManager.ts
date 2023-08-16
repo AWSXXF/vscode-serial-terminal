@@ -128,7 +128,7 @@ function stopSaveLog() {
         return;
     }
 
-    setSerialPortTernimalRecordingLog(serialPortTerminal.stopSave());
+    setSerialPortTernimalRecordingLog(serialPortTerminal.stopSave() ? false : true);
 }
 
 function viewLog(context: vscode.TreeItem) {
