@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
 
-import { pickBoudRate, getSerialPort, pickSerialPort, updateSerialPortProvider } from './serialPortManager';
+import { pickBoudRate, getSerialPort, pickSerialPort, updateSerialPortProvider } from './serialPortView';
 import { SerialPortTerminalManager } from './serialPortTerminalManager';
 import { setSerialPortTernimalRecordingLog } from './contextManager';
-import { updateLogProvider } from './logManager';
+import { updateLogProvider } from './logView';
 
 export function registerCommands(context: vscode.ExtensionContext) {
     context.subscriptions.push(

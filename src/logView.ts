@@ -3,6 +3,12 @@ import * as fs from 'fs';
 import { getLogUri } from './settingManager';
 
 
+export function registerLogView(context: vscode.ExtensionContext) {
+    context.subscriptions.push(
+        vscode.window.registerTreeDataProvider("serialport.logs", getLogProvider())
+    );
+}
+
 const logProvider = new (class implements vscode.TreeDataProvider<vscode.TreeItem> {
 
     updateEmitter = new vscode.EventEmitter<void>();
@@ -40,7 +46,7 @@ const logProvider = new (class implements vscode.TreeDataProvider<vscode.TreeIte
     }
 })();
 
-export function getLogProvider(): vscode.TreeDataProvider<vscode.TreeItem> {
+function getLogProvider(): vscode.TreeDataProvider<vscode.TreeItem> {
     return logProvider;
 }
 

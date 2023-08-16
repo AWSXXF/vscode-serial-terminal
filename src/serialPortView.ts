@@ -4,6 +4,11 @@ import { getBoundRates } from "./settingManager";
 import { SerialPort } from "serialport";
 import { Event, ProviderResult, TreeDataProvider, TreeItem, l10n } from "vscode";
 
+export function registerSerialPortView(context: vscode.ExtensionContext) {
+    context.subscriptions.push(
+        vscode.window.registerTreeDataProvider("serialport.serialportView", getSerialPortProvider())
+    );
+}
 
 colors.setTheme({
     silly: 'rainbow',
@@ -52,7 +57,7 @@ const serialPortProvider = new (class implements TreeDataProvider<TreeItem> {
     }
 })();
 
-export function getSerialPortProvider(): TreeDataProvider<TreeItem> {
+function getSerialPortProvider(): TreeDataProvider<TreeItem> {
     return serialPortProvider;
 }
 
