@@ -105,6 +105,17 @@
         }
       ]
     },
+    "notebooks": [
+      {
+        "type": "scrnb",
+        "displayName": "Script Notebook",
+        "selector": [
+          {
+            "filenamePattern": "*.scrnb"
+          }
+        ]
+      }
+    ],
     "commands": [
       {
         "command": "serialTerminal.openSerialPort",
