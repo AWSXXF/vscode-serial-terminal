@@ -46,11 +46,18 @@
       "entryView": [
         {
           "name": "%TreeView.serialPort%",
-          "id": "serialport.serialportView"
+          "id": "serialport.serialportView",
+          "initialSize": 50
         },
         {
           "name": "log",
-          "id": "serialport.logs"
+          "id": "serialport.logs",
+          "initialSize": 20
+        },
+        {
+          "name": "script",
+          "id": "serialport.scripts",
+          "initialSize": 20
         }
       ]
     },
@@ -75,6 +82,21 @@
           "command": "serialport.openLogConfigaration",
           "when": "view == serialport.logs",
           "group": "navigation@1"
+        },
+        {
+          "command": "serialTerminal.createScriptNotebook",
+          "when": "view == serialport.scripts",
+          "group": "navigation@1"
+        },
+        {
+          "command": "serialport.openScriptConfigaration",
+          "when": "view == serialport.scripts",
+          "group": "navigation@2"
+        },
+        {
+          "command": "serialport.refreshScriptView",
+          "when": "view == serialport.scripts",
+          "group": "navigation@3"
         },
         {
           "command": "serialport.startSaveLog",
@@ -102,6 +124,16 @@
           "command": "serialTerminal.revealInExplorer",
           "when": "view == serialport.logs",
           "group": "inline@1"
+        },
+        {
+          "command": "serialTerminal.revealInExplorer",
+          "when": "view == serialport.scripts",
+          "group": "inline@1"
+        },
+        {
+          "command": "serialTerminal.openTreeItemResource",
+          "when": "view == serialport.scripts",
+          "group": "inline@2"
         }
       ]
     },
@@ -133,6 +165,11 @@
         "title": "%commands.refreshView%"
       },
       {
+        "command": "serialport.refreshScriptView",
+        "icon": "$(sync)",
+        "title": "%commands.refreshView%"
+      },
+      {
         "command": "serialport.openSerialPortConfigaration",
         "icon": "$(gear)",
         "title": "%commands.openSerialPortConfigaration%"
@@ -141,6 +178,11 @@
         "command": "serialport.openLogConfigaration",
         "icon": "$(gear)",
         "title": "%commands.openLogConfigaration%"
+      },
+      {
+        "command": "serialport.openScriptConfigaration",
+        "icon": "$(gear)",
+        "title": "%commands.openScriptConfigaration%"
       },
       {
         "command": "serialport.startSaveLog",
@@ -154,6 +196,11 @@
       },
       {
         "icon": "$(arrow-right)",
+        "command": "serialTerminal.openTreeItemResource",
+        "title": "%commands.openTreeItemResource%"
+      },
+      {
+        "icon": "$(arrow-right)",
         "command": "serialTerminal.viewLog",
         "title": "%commands.viewLog%"
       },
@@ -161,6 +208,11 @@
         "command": "serialTerminal.revealInExplorer",
         "icon": "$(file-directory)",
         "title": "%commands.revealInExplorer%"
+      },
+      {
+        "command": "serialTerminal.createScriptNotebook",
+        "icon": "$(new-file)",
+        "title": "%commands.createScriptNotebook%"
       },
       {
         "command": "doSomething",
@@ -194,6 +246,11 @@
           "title": "%configurations.log.savepath.title%",
           "type": "string",
           "markdownDescription": "%configurations.log.savepath.description%"
+        },
+        "SerialTerminal.script.savepath": {
+          "title": "%configurations.script.savepath.title%",
+          "type": "string",
+          "markdownDescription": "%configurations.script.savepath.description%"
         }
       }
     }

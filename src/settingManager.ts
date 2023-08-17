@@ -7,7 +7,7 @@ export function getBoundRates(): Array<number> {
 }
 
 export function getLogUri(): vscode.Uri {
-    const defaultUri = vscode.Uri.joinPath(extensionContext.extensionUri, "log");
+    const defaultUri = vscode.Uri.joinPath(extensionContext.extensionUri, "userData/log");
     if (!fs.existsSync(defaultUri.fsPath)) {
         fs.mkdirSync(defaultUri.fsPath, { recursive: true });
     }
@@ -24,4 +24,24 @@ export function getLogUri(): vscode.Uri {
     }
 
     return vscode.Uri.file(logPath);
+}
+
+export function getScriptUri(): vscode.Uri {
+    const defaultUri = vscode.Uri.joinPath(extensionContext.extensionUri, "userData/scriptNoteBook");
+    if (!fs.existsSync(defaultUri.fsPath)) {
+        fs.mkdirSync(defaultUri.fsPath, { recursive: true });
+    }
+
+    const scriptPath = vscode.workspace.getConfiguration().get('SerialTerminal.script.savepath') as string;
+    if (scriptPath === '') {
+        return defaultUri;
+    }
+
+    if (!fs.existsSync(scriptPath)) {
+        vscode.window.showErrorMessage("script path `" + scriptPath + "` no found");
+        vscode.commands.executeCommand("workbench.action.openSettings", "SerialTerminal.script.savepath");
+        return defaultUri;
+    }
+
+    return vscode.Uri.file(scriptPath);
 }

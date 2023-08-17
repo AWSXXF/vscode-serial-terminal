@@ -1,16 +1,18 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import { getLogUri } from './settingManager';
+import { getScriptUri } from './settingManager';
 
-
-export function registerLogView(context: vscode.ExtensionContext) {
+export function registerScriptView(context: vscode.ExtensionContext) {
     context.subscriptions.push(
-        vscode.window.registerTreeDataProvider("serialport.logs", logProvider)
+        vscode.window.registerTreeDataProvider("serialport.scripts", scriptProvider)
     );
 }
 
-const logProvider = new (class implements vscode.TreeDataProvider<vscode.TreeItem> {
+export function updateScriptProvider() {
+    scriptProvider.update();
+}
 
+const scriptProvider = new (class implements vscode.TreeDataProvider<vscode.TreeItem> {
     private updateEmitter = new vscode.EventEmitter<void>();
     onDidChangeTreeData: vscode.Event<void | vscode.TreeItem | vscode.TreeItem[] | null | undefined> | undefined = this.updateEmitter.event;
     update() {
@@ -22,7 +24,7 @@ const logProvider = new (class implements vscode.TreeDataProvider<vscode.TreeIte
     }
     getChildren(element?: vscode.TreeItem | undefined): vscode.ProviderResult<vscode.TreeItem[]> {
         return new Promise((resolve, reject) => {
-            const logDirUri = getLogUri();
+            const logDirUri = getScriptUri();
             var logs;
             try {
                 logs = fs.readdirSync(logDirUri.fsPath);
@@ -32,7 +34,7 @@ const logProvider = new (class implements vscode.TreeDataProvider<vscode.TreeIte
 
             if (logs) {
                 const treeItem = logs.filter((file) => {
-                    return fs.statSync(vscode.Uri.joinPath(logDirUri, file).fsPath).isFile() && file.match('^.*\\.log$') || file.match('^.*\\.txt$');
+                    return fs.statSync(vscode.Uri.joinPath(logDirUri, file).fsPath).isFile() && file.match('^.*\\.scrnb$');
                 }).map((file) => {
                     return {
                         resourceUri: vscode.Uri.joinPath(logDirUri, file)
@@ -44,8 +46,5 @@ const logProvider = new (class implements vscode.TreeDataProvider<vscode.TreeIte
             }
         });
     }
-})();
 
-export function updateLogProvider() {
-    logProvider.update();
-}
+})();

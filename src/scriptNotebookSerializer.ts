@@ -30,7 +30,7 @@ export function registerScriptNotebookSerializer(context: vscode.ExtensionContex
                                 vscode.NotebookCellKind.Code :
                                 vscode.NotebookCellKind.Markup,
                             item.source.join('\n'),
-                            item.type === 'code' ? 'plaintext' : 'markdown'
+                            item.type === 'code' ? 'shellscript' : 'markdown'
                         )
                     ) : [];
 
