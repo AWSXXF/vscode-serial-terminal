@@ -33,7 +33,7 @@ export function registerScriptNotebookController(context: vscode.ExtensionContex
             private async doExecute(cell: vscode.NotebookCell): Promise<void> {
                 let cmds = cell.document.getText().split(/\r?\n/g);
                 cmds.forEach(value => {
-                    vscode.commands.executeCommand("workbench.action.terminal.runSelectedText", value);
+                    vscode.window.activeTerminal?.sendText(value);
                 });
             }
 
@@ -41,5 +41,5 @@ export function registerScriptNotebookController(context: vscode.ExtensionContex
                 this.controller.dispose();
             }
         })()
-    )
+    );
 }
