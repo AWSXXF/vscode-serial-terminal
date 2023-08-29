@@ -1,7 +1,8 @@
 {
     "entryView.title": "串口资源管理器",
-    "TreeView.serialPort": "可用串口",
-    "TreeView.scripts": "脚本",
+    "TreeView.serialPorts": "可用串口",
+    "TreeView.logs": "日志",
+    "TreeView.scriptsNotebooks": "脚本notebook",
     "commands.openSerialTerminal": "打开串口终端",
     "commands.refreshView": "刷新",
     "commands.openSerialPortConfigaration": "打开串口设置",

@@ -1,7 +1,8 @@
 {
     "entryView.title": "serial port resource manager",
-    "TreeView.serialPort": "available serial port",
-    "TreeView.scripts": "scripts",
+    "TreeView.serialPorts": "available serial port",
+    "TreeView.logs": "logs",
+    "TreeView.scriptsNotebooks": "script notebooks",
     "commands.openSerialTerminal": "open serial terminal",
     "commands.refreshView": "refresh",
     "commands.openSerialPortConfigaration": "open serial port setting",

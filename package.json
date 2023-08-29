@@ -45,18 +45,18 @@
     "views": {
       "entryView": [
         {
-          "name": "%TreeView.serialPort%",
+          "name": "%TreeView.serialPorts%",
           "id": "serialport.serialportView",
-          "initialSize": 50
-        },
-        {
-          "name": "log",
-          "id": "serialport.logs",
           "initialSize": 20
         },
         {
-          "name": "script",
-          "id": "serialport.scripts",
+          "name": "%TreeView.logs%",
+          "id": "serialport.logs",
+          "initialSize": 50
+        },
+        {
+          "name": "%TreeView.scriptsNotebooks%",
+          "id": "serialport.scriptsNotebooks",
           "initialSize": 20
         }
       ]

@@ -1,4 +1,4 @@
-# serial terminal extension for vitual studio code 
+# serial terminal extension for visual studio code 
 
 ---
 
@@ -20,14 +20,14 @@ This is a simple terminal interaction serial extension for vscode, it is still a
 
 - Interact with the serial port like a terminal
 
-- Save adn view the logs
+- Save and view the logs
 
 - Configuring a customised open baud rate
+
+- Very nice script notebook features
 
 ## Future features
 
 - Serial port to send and display hex data
-
-- Running the send script
 
 - Add configurable items

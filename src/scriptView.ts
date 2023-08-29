@@ -4,7 +4,7 @@ import { getScriptUri } from './settingManager';
 
 export function registerScriptView(context: vscode.ExtensionContext) {
     context.subscriptions.push(
-        vscode.window.registerTreeDataProvider("serialport.scripts", scriptProvider)
+        vscode.window.registerTreeDataProvider("serialport.scriptsNotebooks", scriptProvider)
     );
 }
 
@@ -24,20 +24,20 @@ const scriptProvider = new (class implements vscode.TreeDataProvider<vscode.Tree
     }
     getChildren(element?: vscode.TreeItem | undefined): vscode.ProviderResult<vscode.TreeItem[]> {
         return new Promise((resolve, reject) => {
-            const logDirUri = getScriptUri();
+            const scriptDirUri = getScriptUri();
             var logs;
             try {
-                logs = fs.readdirSync(logDirUri.fsPath);
+                logs = fs.readdirSync(scriptDirUri.fsPath);
             } catch (err) {
-                vscode.window.showErrorMessage(vscode.l10n.t("Log path error: {0}", (err as Error).message));
+                vscode.window.showErrorMessage(vscode.l10n.t("Script path error: {0}", (err as Error).message));
             }
 
             if (logs) {
                 const treeItem = logs.filter((file) => {
-                    return fs.statSync(vscode.Uri.joinPath(logDirUri, file).fsPath).isFile() && file.match('^.*\\.scrnb$');
+                    return fs.statSync(vscode.Uri.joinPath(scriptDirUri, file).fsPath).isFile() && file.match('^.*\\.scrnb$');
                 }).map((file) => {
                     return {
-                        resourceUri: vscode.Uri.joinPath(logDirUri, file)
+                        resourceUri: vscode.Uri.joinPath(scriptDirUri, file)
                     };
                 });
                 resolve(treeItem);
