@@ -41,7 +41,7 @@ export function getSettingFolderDefault(section: string, defaultName: string): v
     let folderPath = vscode.workspace.getConfiguration().get(section) as string;
     if (!fs.existsSync(folderPath)) {
         folderPath = vscode.Uri.joinPath(
-            vscode.Uri.parse(os.homedir()),
+            vscode.Uri.file(os.homedir()),
             "serialTerminal",
             defaultName
         ).fsPath;
