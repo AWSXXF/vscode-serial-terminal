@@ -85,17 +85,17 @@
         },
         {
           "command": "serialTerminal.createScriptNotebook",
-          "when": "view == serialport.scripts",
+          "when": "view == serialport.scriptsNotebooks",
           "group": "navigation@1"
         },
         {
           "command": "serialport.openScriptConfigaration",
-          "when": "view == serialport.scripts",
+          "when": "view == serialport.scriptsNotebooks",
           "group": "navigation@2"
         },
         {
           "command": "serialport.refreshScriptView",
-          "when": "view == serialport.scripts",
+          "when": "view == serialport.scriptsNotebooks",
           "group": "navigation@3"
         },
         {
@@ -127,12 +127,12 @@
         },
         {
           "command": "serialTerminal.revealInExplorer",
-          "when": "view == serialport.scripts",
+          "when": "view == serialport.scriptsNotebooks",
           "group": "inline@1"
         },
         {
           "command": "serialTerminal.openTreeItemResource",
-          "when": "view == serialport.scripts",
+          "when": "view == serialport.scriptsNotebooks",
           "group": "inline@2"
         }
       ]
