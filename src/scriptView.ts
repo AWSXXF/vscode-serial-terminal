@@ -25,15 +25,17 @@ const scriptProvider = new (class implements vscode.TreeDataProvider<vscode.Tree
     getChildren(element?: vscode.TreeItem | undefined): vscode.ProviderResult<vscode.TreeItem[]> {
         return new Promise((resolve, reject) => {
             const scriptDirUri = getScriptUri();
-            var logs;
+            var scripts;
             try {
-                logs = fs.readdirSync(scriptDirUri.fsPath);
+                scripts = fs.readdirSync(scriptDirUri.fsPath);
             } catch (err) {
                 vscode.window.showErrorMessage(vscode.l10n.t("Script path error: {0}", (err as Error).message));
             }
 
-            if (logs) {
-                const treeItem = logs.filter((file) => {
+            console.log({ scripts });
+
+            if (scripts) {
+                const treeItem = scripts.filter((file) => {
                     return fs.statSync(vscode.Uri.joinPath(scriptDirUri, file).fsPath).isFile() && file.match('^.*\\.scrnb$');
                 }).map((file) => {
                     return {

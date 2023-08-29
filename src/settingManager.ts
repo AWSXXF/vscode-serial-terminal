@@ -1,47 +1,57 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
+import * as os from 'os';
+
 import { extensionContext } from './extension';
 
 export function getBoundRates(): Array<number> {
     return vscode.workspace.getConfiguration().get('SerialTerminal.serial port.Boud Rate') as Array<number>;
 }
 
-export function getLogUri(): vscode.Uri {
-    const defaultUri = vscode.Uri.joinPath(extensionContext.extensionUri, "userData/log");
-    if (!fs.existsSync(defaultUri.fsPath)) {
-        fs.mkdirSync(defaultUri.fsPath, { recursive: true });
+async function getSettingFolder(section: string, dialogTitle: string): Promise<vscode.Uri | undefined> {
+    let logPath = vscode.workspace.getConfiguration().get(section) as string;
+    if (logPath === '' || !fs.existsSync(logPath)) {
+        const folderUri = await vscode.window.showOpenDialog({
+            canSelectFolders: true,
+            title: dialogTitle
+        });
+        if (folderUri && folderUri.length === 1) {
+            vscode.workspace.getConfiguration().update(
+                section,
+                folderUri[0].fsPath,
+                vscode.ConfigurationTarget.Global
+            );
+            logPath = folderUri[0].fsPath;
+        } else {
+            return;
+        }
     }
-
-    const logPath = vscode.workspace.getConfiguration().get('SerialTerminal.log.savepath') as string;
-    if (logPath === '') {
-        return defaultUri;
-    }
-
-    if (!fs.existsSync(logPath)) {
-        vscode.window.showErrorMessage("Log path `" + logPath + "` no found");
-        vscode.commands.executeCommand("workbench.action.openSettings", "SerialTerminal.log.savepath");
-        return defaultUri;
-    }
-
     return vscode.Uri.file(logPath);
 }
 
+export function getLogUri(): vscode.Uri {
+    return getSettingFolderDefault('SerialTerminal.log.savepath', 'terminalLog');
+}
+
 export function getScriptUri(): vscode.Uri {
-    const defaultUri = vscode.Uri.joinPath(extensionContext.extensionUri, "userData/scriptNoteBook");
-    if (!fs.existsSync(defaultUri.fsPath)) {
-        fs.mkdirSync(defaultUri.fsPath, { recursive: true });
+    return getSettingFolderDefault('SerialTerminal.script.savepath', 'scriptNoteBook');
+}
+
+export function getSettingFolderDefault(section: string, defaultName: string): vscode.Uri {
+    let folderPath = vscode.workspace.getConfiguration().get(section) as string;
+    if (!fs.existsSync(folderPath)) {
+        folderPath = vscode.Uri.joinPath(
+            vscode.Uri.parse(os.homedir()),
+            "serialTerminal",
+            defaultName
+        ).fsPath;
+        fs.mkdirSync(folderPath, { recursive: true });
+        vscode.workspace.getConfiguration().update(
+            section,
+            folderPath,
+            vscode.ConfigurationTarget.Global
+        );
     }
 
-    const scriptPath = vscode.workspace.getConfiguration().get('SerialTerminal.script.savepath') as string;
-    if (scriptPath === '') {
-        return defaultUri;
-    }
-
-    if (!fs.existsSync(scriptPath)) {
-        vscode.window.showErrorMessage("script path `" + scriptPath + "` no found");
-        vscode.commands.executeCommand("workbench.action.openSettings", "SerialTerminal.script.savepath");
-        return defaultUri;
-    }
-
-    return vscode.Uri.file(scriptPath);
+    return vscode.Uri.file(folderPath);
 }
