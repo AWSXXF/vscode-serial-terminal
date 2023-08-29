@@ -142,7 +142,7 @@ export class SerialPortTerminal implements ISerialPortTerminal {
 
         fs.writeFileSync(this.logPath.fsPath, "");
         this.recordCallback = (data) => {
-            fs.appendFileSync(this.logPath.fsPath, data.toString().replace('\r', ''));
+            fs.appendFileSync(this.logPath.fsPath, data.toString().replaceAll('\r', ''));
         };
         this.port.addListener("data", this.recordCallback);
         if (callback) {
