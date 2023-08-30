@@ -74,14 +74,19 @@
           "group": "navigation@1"
         },
         {
+          "command": "serialport.openLogConfigaration",
+          "when": "view == serialport.logs",
+          "group": "navigation@1"
+        },
+        {
           "command": "serialport.refreshLogView",
           "when": "view == serialport.logs",
           "group": "navigation@2"
         },
         {
-          "command": "serialport.openLogConfigaration",
+          "command": "serialTerminal.revealLogs",
           "when": "view == serialport.logs",
-          "group": "navigation@1"
+          "group": "navigation@3"
         },
         {
           "command": "serialTerminal.createScriptNotebook",
@@ -97,6 +102,11 @@
           "command": "serialport.refreshScriptView",
           "when": "view == serialport.scriptsNotebooks",
           "group": "navigation@3"
+        },
+        {
+          "command": "serialTerminal.revealScriptNoteBooks",
+          "when": "view == serialport.scriptsNotebooks",
+          "group": "navigation@4"
         },
         {
           "command": "serialport.startSaveLog",
@@ -116,24 +126,14 @@
           "group": "inline"
         },
         {
-          "command": "serialTerminal.viewLog",
-          "when": "view == serialport.logs",
-          "group": "inline@2"
-        },
-        {
           "command": "serialTerminal.revealInExplorer",
-          "when": "view == serialport.logs",
-          "group": "inline@1"
+          "when": "view == serialport.logs || view == serialport.scriptsNotebooks",
+          "group": "navigation@1"
         },
         {
-          "command": "serialTerminal.revealInExplorer",
-          "when": "view == serialport.scriptsNotebooks",
-          "group": "inline@1"
-        },
-        {
-          "command": "serialTerminal.openTreeItemResource",
-          "when": "view == serialport.scriptsNotebooks",
-          "group": "inline@2"
+          "command": "serialTerminal.deleteResource",
+          "when": "view == serialport.logs || view == serialport.scriptsNotebooks",
+          "group": "navigation@2"
         }
       ]
     },
@@ -180,9 +180,19 @@
         "title": "%commands.openLogConfigaration%"
       },
       {
+        "command": "serialTerminal.revealLogs",
+        "icon": "$(file-directory)",
+        "title": "%commands.revealInExplorer%"
+      },
+      {
         "command": "serialport.openScriptConfigaration",
         "icon": "$(gear)",
         "title": "%commands.openScriptConfigaration%"
+      },
+      {
+        "command": "serialTerminal.revealScriptNoteBooks",
+        "icon": "$(file-directory)",
+        "title": "%commands.revealInExplorer%"
       },
       {
         "command": "serialport.startSaveLog",
@@ -213,6 +223,11 @@
         "command": "serialTerminal.createScriptNotebook",
         "icon": "$(new-file)",
         "title": "%commands.createScriptNotebook%"
+      },
+      {
+        "command": "serialTerminal.deleteResource",
+        "icon": "$(trash)",
+        "title": "%commands.delete%"
       },
       {
         "command": "doSomething",

@@ -1,12 +1,4 @@
 import * as vscode from 'vscode';
-import * as colors from 'colors';
-import * as fs from 'fs';
-
-import { l10n } from "vscode";
-import { SerialPort } from 'serialport';
-import { getLogUri } from './settingManager';
-import { updateLogProvider } from './logView';
-import { updateSerialPortProvider } from './serialPortView';
 import { ISerialPortTerminal, SerialPortTerminal } from './serialPortTerminal';
 
 interface ISerialPortTerminalManager {

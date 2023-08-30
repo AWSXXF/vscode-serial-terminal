@@ -34,9 +34,13 @@ const logProvider = new (class implements vscode.TreeDataProvider<vscode.TreeIte
                 const treeItem = logs.filter((file) => {
                     return fs.statSync(vscode.Uri.joinPath(logDirUri, file).fsPath).isFile() && file.match('^.*\\.log$') || file.match('^.*\\.txt$');
                 }).map((file) => {
-                    return {
-                        resourceUri: vscode.Uri.joinPath(logDirUri, file)
+                    const item = new vscode.TreeItem(vscode.Uri.joinPath(logDirUri, file));
+                    item.command = {
+                        title: "View",
+                        command: "serialTerminal.viewLog",
+                        arguments: [item]
                     };
+                    return item;
                 });
                 resolve(treeItem);
             } else {

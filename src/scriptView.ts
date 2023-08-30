@@ -32,15 +32,17 @@ const scriptProvider = new (class implements vscode.TreeDataProvider<vscode.Tree
                 vscode.window.showErrorMessage(vscode.l10n.t("Script path error: {0}", (err as Error).message));
             }
 
-            console.log({ scripts });
-
             if (scripts) {
                 const treeItem = scripts.filter((file) => {
                     return fs.statSync(vscode.Uri.joinPath(scriptDirUri, file).fsPath).isFile() && file.match('^.*\\.scrnb$');
                 }).map((file) => {
-                    return {
-                        resourceUri: vscode.Uri.joinPath(scriptDirUri, file)
+                    const item = new vscode.TreeItem(vscode.Uri.joinPath(scriptDirUri, file));
+                    item.command = {
+                        title: "View",
+                        command: "serialTerminal.openTreeItemResource",
+                        arguments: [item]
                     };
+                    return item;
                 });
                 resolve(treeItem);
             } else {

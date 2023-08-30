@@ -2,8 +2,6 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as os from 'os';
 
-import { extensionContext } from './extension';
-
 export function getBoundRates(): Array<number> {
     return vscode.workspace.getConfiguration().get('SerialTerminal.serial port.Boud Rate') as Array<number>;
 }

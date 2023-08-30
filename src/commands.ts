@@ -1,15 +1,13 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 
-import { pickBoudRate, getSerialPort, pickSerialPort, updateSerialPortProvider } from './serialPortView';
+import { pickBoudRate, pickSerialPort, updateSerialPortProvider } from './serialPortView';
 import { SerialPortTerminalManager } from './serialPortTerminalManager';
 import { setSerialPortTernimalRecordingLog } from './contextManager';
 import { updateLogProvider } from './logView';
 import { updateScriptProvider } from './scriptView';
 import { l10n } from 'vscode';
-import { getScriptUri } from './settingManager';
-import { extensionContext } from './extension';
-import * as os from 'os';
+import { getLogUri, getScriptUri } from './settingManager';
 
 export function registerCommands(context: vscode.ExtensionContext) {
     context.subscriptions.push(
@@ -107,70 +105,28 @@ export function registerCommands(context: vscode.ExtensionContext) {
         )
     );
 
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            "serialTerminal.revealScriptNoteBooks",
+            () => vscode.commands.executeCommand("revealFileInOS", getScriptUri())
+        )
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            "serialTerminal.revealLogs",
+            () => vscode.commands.executeCommand("revealFileInOS", getLogUri())
+        )
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            "serialTerminal.deleteResource",
+            deleteResource
+        )
+    );
+
     vscode.commands.registerCommand("doSomething", async (context) => {
-
-        const logPath: string = vscode.workspace.getConfiguration().get('SerialTerminal.log.savepath') as string;
-        // console.log({ logPath });
-        if (logPath === '' || !fs.existsSync(logPath)) {
-            const folderUri = await vscode.window.showOpenDialog({
-                canSelectFolders: true,
-                title: "选择一个保存log的文件夹"
-            });
-
-            if (folderUri && folderUri.length === 1) {
-                vscode.workspace.getConfiguration().update(
-                    'SerialTerminal.log.savepath',
-                    folderUri[0].fsPath,
-                    vscode.ConfigurationTarget.Global
-                );
-            }
-        }
-
-        const pickUri = await vscode.window.showQuickPick([
-            {
-                label: vscode.Uri.parse(os.homedir() + "/log").fsPath,
-                description: "description",
-                detail: "detail",
-                picked: true,
-                alwaysShow: true,
-                buttons: [
-                    {
-                        iconPath: vscode.Uri.parse("C:\\MYFILE\\project\\vscode\\playground\\serialTerminal\\assets\\logo.svg"),
-                        tooltip: "tooltip"
-                    },
-                    {
-                        iconPath: vscode.Uri.parse("C:\\MYFILE\\project\\vscode\\playground\\serialTerminal\\assets\\logo.svg"),
-                        tooltip: "tooltip"
-                    }
-                ]
-            },
-            {
-                label: vscode.Uri.parse(os.homedir() + "/log").fsPath,
-
-            },
-            {
-                label: vscode.Uri.parse(os.homedir() + "/log").fsPath,
-
-            },
-
-        ]);
-
-
-        // vscode.workspace.getConfiguration().update(
-        //     'SerialTerminal.log.savepath',
-        //     '',
-        //     vscode.ConfigurationTarget.Global
-        // );
-
-        // let uri = await vscode.window.showOpenDialog({
-        //     // canSelectFiles: false, // 禁止选择文件
-        //     canSelectFolders: true, // 允许选择文件夹
-        //     // canSelectMany: false, // 只能选择一个文件夹
-        //     // openLabel: 'Select Folder'
-        //     title: 'select a folder to save log'
-        // });
-
-        // console.log({ uri });
     });
 }
 
@@ -238,7 +194,6 @@ function openTreeItemResource(context: vscode.TreeItem) {
 }
 
 function revealInExplorer(context: vscode.TreeItem) {
-    console.log(context.resourceUri);
     vscode.commands.executeCommand("revealFileInOS", context.resourceUri);
 }
 
@@ -259,3 +214,11 @@ async function createScriptNotebook() {
     vscode.commands.executeCommand("vscode.open", scriptNotebookFile);
     updateScriptProvider();
 }
+async function deleteResource(context: vscode.TreeItem) {
+    if (context.resourceUri) {
+        await vscode.workspace.fs.delete(context.resourceUri);
+    }
+    updateLogProvider();
+    updateScriptProvider();
+}
+
