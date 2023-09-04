@@ -4,8 +4,6 @@ import * as fs from 'fs';
 import { pickBoudRate, pickSerialPort, updateSerialPortProvider } from './serialPortView';
 import { SerialPortTerminalManager } from './serialPortTerminalManager';
 import { setSerialPortTernimalRecordingLog } from './contextManager';
-import { updateLogProvider } from './logView';
-import { updateScriptProvider } from './scriptView';
 import { l10n } from 'vscode';
 import { getLogUri, getScriptUri } from './settingManager';
 
@@ -28,20 +26,6 @@ export function registerCommands(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand(
             "serialport.refreshSerialPortView",
             updateSerialPortProvider
-        )
-    );
-
-    context.subscriptions.push(
-        vscode.commands.registerCommand(
-            "serialport.refreshLogView",
-            updateLogProvider
-        )
-    );
-
-    context.subscriptions.push(
-        vscode.commands.registerCommand(
-            "serialport.refreshScriptView",
-            updateScriptProvider
         )
     );
 
@@ -164,9 +148,7 @@ async function startSaveLog() {
         return;
     }
 
-    setSerialPortTernimalRecordingLog(await serialPortTerminal.startSaveLog(() => {
-        updateLogProvider();
-    }));
+    setSerialPortTernimalRecordingLog(await serialPortTerminal.startSaveLog());
 }
 
 function stopSaveLog() {
@@ -212,13 +194,10 @@ async function createScriptNotebook() {
     const scriptNotebookFile = vscode.Uri.joinPath(getScriptUri(), fileName + ".scrnb");
     fs.writeFileSync(scriptNotebookFile.fsPath, "");
     vscode.commands.executeCommand("vscode.open", scriptNotebookFile);
-    updateScriptProvider();
 }
 async function deleteResource(context: vscode.TreeItem) {
     if (context.resourceUri) {
         await vscode.workspace.fs.delete(context.resourceUri);
     }
-    updateLogProvider();
-    updateScriptProvider();
 }
 

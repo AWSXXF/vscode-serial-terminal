@@ -16,18 +16,18 @@ This is a simple terminal interaction serial extension for vscode, it is still a
 
 ---
 
-## Currunt features
+## Features
 
-- Interact with the serial port like a terminal
+- [x] Interact with the serial port like a terminal
 
-- Save and view the logs
+- [x] Save and view the logs
 
-- Configuring a customised open baud rate
+- [x] Configuring a customised open baud rate
 
-- Very nice script notebook features
+- [x] Very nice script notebook features
 
-## Future features
+- [ ] Serial port to send and display hex data
 
-- Serial port to send and display hex data
+- [ ] Time stamp
 
-- Add configurable items
+- [ ] Add configurable items

@@ -17,7 +17,7 @@ export function activate(context: vscode.ExtensionContext) {
 	registerScriptView(context);
 	registerScriptNotebookSerializer(context);
 	registerScriptNotebookController(context);
-	registerContextCallback();
+	registerContextCallback(context);
 }
 
 export function deactivate() { }

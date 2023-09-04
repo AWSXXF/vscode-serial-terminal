@@ -8,16 +8,12 @@ export function registerScriptView(context: vscode.ExtensionContext) {
     );
 }
 
-export function updateScriptProvider() {
-    scriptProvider.update();
-}
-
 const scriptProvider = new (class implements vscode.TreeDataProvider<vscode.TreeItem> {
     private updateEmitter = new vscode.EventEmitter<void>();
-    onDidChangeTreeData: vscode.Event<void | vscode.TreeItem | vscode.TreeItem[] | null | undefined> | undefined = this.updateEmitter.event;
-    update() {
+    private _watcher = fs.watch(getScriptUri().fsPath, () => {
         this.updateEmitter.fire();
-    }
+    });
+    onDidChangeTreeData: vscode.Event<void | vscode.TreeItem | vscode.TreeItem[] | null | undefined> | undefined = this.updateEmitter.event;
 
     getTreeItem(element: vscode.TreeItem): vscode.TreeItem | Thenable<vscode.TreeItem> {
         return element;
