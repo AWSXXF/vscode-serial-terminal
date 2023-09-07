@@ -4,26 +4,11 @@ import { getBoundRates } from "./settingManager";
 import { SerialPort } from "serialport";
 import { Event, ProviderResult, TreeDataProvider, TreeItem, l10n } from "vscode";
 
-export function registerSerialPortView(context: vscode.ExtensionContext) {
+function registerSerialPortView(context: vscode.ExtensionContext) {
     context.subscriptions.push(
-        vscode.window.registerTreeDataProvider("serialport.serialportView", getSerialPortProvider())
+        vscode.window.registerTreeDataProvider("serialport.serialportView", serialPortProvider)
     );
 }
-
-colors.setTheme({
-    silly: 'rainbow',
-    input: 'grey',
-    verbose: 'cyan',
-    prompt: 'grey',
-    info: 'green',
-    data: 'grey',
-    help: 'cyan',
-    warn: 'yellow',
-    debug: 'blue',
-    error: 'red'
-});
-
-const ports = new Map<string, SerialPort>();
 
 const serialPortProvider = new (class implements TreeDataProvider<TreeItem> {
     updateEmitter = new vscode.EventEmitter<void>();
@@ -57,15 +42,11 @@ const serialPortProvider = new (class implements TreeDataProvider<TreeItem> {
     }
 })();
 
-function getSerialPortProvider(): TreeDataProvider<TreeItem> {
-    return serialPortProvider;
-}
-
-export function updateSerialPortProvider() {
+function updateSerialPortProvider() {
     serialPortProvider.update();
 }
 
-export async function pickSerialPort(): Promise<string | undefined> {
+async function pickSerialPort(): Promise<string | undefined> {
     const serialPortItems: Thenable<vscode.QuickPickItem[]> = new Promise((resolve, reject) => {
         SerialPort.list().then((ports) => {
             const portItems: vscode.QuickPickItem[] = ports.map((port) => {
@@ -81,7 +62,7 @@ export async function pickSerialPort(): Promise<string | undefined> {
     return port ? port.label : undefined;
 }
 
-export async function pickBoudRate(): Promise<number | undefined> {
+async function pickBoudRate(): Promise<number | undefined> {
     let boudRate = await vscode.window.showQuickPick(boudRates(), { placeHolder: l10n.t("please select a boud rate") });
     return boudRate ? parseInt(boudRate.label) : undefined;
 }
@@ -93,7 +74,7 @@ function boudRates(): Thenable<vscode.QuickPickItem[]> {
     });
 }
 
-export function getSerialPort(path: string, boudRate: number): SerialPort | undefined {
+function getSerialPort(path: string, boudRate: number): SerialPort | undefined {
     var getPortSuccess = true;
     const port = new SerialPort({ path: path, baudRate: boudRate }, (err) => {
         if (err) {
@@ -103,3 +84,11 @@ export function getSerialPort(path: string, boudRate: number): SerialPort | unde
     });
     return getPortSuccess ? port : undefined;
 }
+
+export {
+    registerSerialPortView,
+    updateSerialPortProvider,
+    pickSerialPort,
+    pickBoudRate,
+    // getSerialPort
+};

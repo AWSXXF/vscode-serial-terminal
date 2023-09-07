@@ -6,7 +6,7 @@ import { SerialPort } from 'serialport';
 
 import { getLogUri } from './settingManager';
 
-export interface ISerialPortTerminal {
+interface ISerialPortTerminal {
     get portPath(): string;
     get baudRate(): number;
     get terminalName(): string;
@@ -20,7 +20,7 @@ export interface ISerialPortTerminal {
     stopSave(): boolean;
 }
 
-export class SerialPortTerminal implements ISerialPortTerminal {
+class SerialPortTerminal implements ISerialPortTerminal {
     private opts: ExtensionTerminalOptions;
     private port: SerialPort;
     private terminal: vscode.Terminal | undefined;
@@ -161,3 +161,5 @@ export class SerialPortTerminal implements ISerialPortTerminal {
         return false;
     }
 }
+
+export { ISerialPortTerminal, SerialPortTerminal };

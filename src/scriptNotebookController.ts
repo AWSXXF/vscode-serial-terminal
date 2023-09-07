@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 
-export function registerScriptNotebookController(context: vscode.ExtensionContext) {
+function registerScriptNotebookController(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         new (class {
             private readonly id = 'script-notebook-controller';
@@ -43,3 +43,5 @@ export function registerScriptNotebookController(context: vscode.ExtensionContex
         })()
     );
 }
+
+export { registerScriptNotebookController };

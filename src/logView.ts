@@ -1,51 +1,23 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import { getLogUri } from './settingManager';
+import { FileTreeDataProvider } from './FileTreeDataProvider';
 
 
-export function registerLogView(context: vscode.ExtensionContext) {
+function registerLogView(context: vscode.ExtensionContext) {
     context.subscriptions.push(
-        vscode.window.registerTreeDataProvider("serialport.logs", logProvider)
+        vscode.window.registerTreeDataProvider(
+            "serialport.logs",
+            new FileTreeDataProvider(
+                ['.txt', '.log'],
+                getLogUri,
+                {
+                    command: "serialTerminal.openTreeItemResource",
+                    readdirErrorMessagePrefix: vscode.l10n.t("Script path error: ")
+                }
+            )
+        )
     );
 }
 
-const logProvider = new (class implements vscode.TreeDataProvider<vscode.TreeItem> {
-
-    private updateEmitter = new vscode.EventEmitter<void>();
-    private _watcher = fs.watch(getLogUri().fsPath, () => {
-        this.updateEmitter.fire();
-    });
-    onDidChangeTreeData: vscode.Event<void | vscode.TreeItem | vscode.TreeItem[] | null | undefined> | undefined = this.updateEmitter.event;
-
-    getTreeItem(element: vscode.TreeItem): vscode.TreeItem | Thenable<vscode.TreeItem> {
-        return element;
-    }
-    getChildren(element?: vscode.TreeItem | undefined): vscode.ProviderResult<vscode.TreeItem[]> {
-        return new Promise((resolve, reject) => {
-            const logDirUri = getLogUri();
-            var logs;
-            try {
-                logs = fs.readdirSync(logDirUri.fsPath);
-            } catch (err) {
-                vscode.window.showErrorMessage(vscode.l10n.t("Log path error: {0}", (err as Error).message));
-            }
-
-            if (logs) {
-                const treeItem = logs.filter((file) => {
-                    return fs.statSync(vscode.Uri.joinPath(logDirUri, file).fsPath).isFile() && file.match('^.*\\.log$') || file.match('^.*\\.txt$');
-                }).map((file) => {
-                    const item = new vscode.TreeItem(vscode.Uri.joinPath(logDirUri, file));
-                    item.command = {
-                        title: "View",
-                        command: "serialTerminal.viewReadOnlyDocument",
-                        arguments: [item.resourceUri]
-                    };
-                    return item;
-                });
-                resolve(treeItem);
-            } else {
-                reject();
-            }
-        });
-    }
-})();
+export { registerLogView };

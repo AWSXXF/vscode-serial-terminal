@@ -7,7 +7,7 @@ import { setSerialPortTernimalRecordingLog } from './contextManager';
 import { l10n } from 'vscode';
 import { getLogUri, getScriptUri } from './settingManager';
 
-export function registerCommands(context: vscode.ExtensionContext) {
+function registerCommands(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand(
             "serialTerminal.openSerialPort",
@@ -201,3 +201,4 @@ async function viewReadOnlyDocument(uri: vscode.Uri) {
     await vscode.window.showTextDocument(doc, { preview: false });
 }
 
+export { registerCommands };

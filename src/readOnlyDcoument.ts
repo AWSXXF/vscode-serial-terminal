@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 
-export function registerReadOnlyDocument(context: vscode.ExtensionContext) {
+function registerReadOnlyDocument(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.workspace.registerTextDocumentContentProvider("readonly", new (class implements vscode.TextDocumentContentProvider {
             onDidChange?: vscode.Event<vscode.Uri> | undefined;
@@ -13,3 +13,5 @@ export function registerReadOnlyDocument(context: vscode.ExtensionContext) {
         })())
     );
 }
+
+export { registerReadOnlyDocument };

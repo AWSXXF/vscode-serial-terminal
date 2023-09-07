@@ -10,7 +10,7 @@ interface ISerialPortTerminalManager {
 }
 
 
-export class SerialPortTerminalManager implements ISerialPortTerminalManager {
+class SerialPortTerminalManager implements ISerialPortTerminalManager {
     private serialPortTerminals = new Map<string, ISerialPortTerminal>();
     private static instance: ISerialPortTerminalManager;
     private constructor() { }
@@ -51,3 +51,5 @@ export class SerialPortTerminalManager implements ISerialPortTerminalManager {
         return this.serialPortTerminals.delete(terminalName);
     }
 }
+
+export { SerialPortTerminalManager };

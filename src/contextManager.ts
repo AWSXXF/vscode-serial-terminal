@@ -1,8 +1,7 @@
 import * as vscode from 'vscode';
 import { SerialPortTerminalManager } from './serialPortTerminalManager';
 
-
-export function registerContextCallback(context: vscode.ExtensionContext) {
+function registerContextCallback(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.window.onDidChangeActiveTerminal((terminal) => {
             if (!terminal) {
@@ -24,7 +23,7 @@ export function registerContextCallback(context: vscode.ExtensionContext) {
         }));
 }
 
-export function setSerialPortTernimalRecordingLog(value: boolean) {
+function setSerialPortTernimalRecordingLog(value: boolean) {
     vscode.commands.executeCommand(
         "setContext",
         "serialTerminal.serialPortTernimalRecordingLog",
@@ -32,10 +31,12 @@ export function setSerialPortTernimalRecordingLog(value: boolean) {
     );
 }
 
-export function setSerialPortTernimalFocus(value: boolean) {
+function setSerialPortTernimalFocus(value: boolean) {
     vscode.commands.executeCommand(
         "setContext",
         "serialTerminal.serialPortTernimalFocus",
         value
     );
 }
+
+export { registerContextCallback, setSerialPortTernimalRecordingLog };

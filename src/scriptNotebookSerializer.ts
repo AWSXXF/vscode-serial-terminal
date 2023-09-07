@@ -10,7 +10,7 @@ interface ScriptNoteBookCell {
     source: string[],
 }
 
-export function registerScriptNotebookSerializer(context: vscode.ExtensionContext) {
+function registerScriptNotebookSerializer(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.workspace.registerNotebookSerializer(
             "scrnb",
@@ -51,3 +51,5 @@ export function registerScriptNotebookSerializer(context: vscode.ExtensionContex
             })())
     );
 }
+
+export { registerScriptNotebookSerializer };
