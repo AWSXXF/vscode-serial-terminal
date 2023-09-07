@@ -208,13 +208,13 @@
         "title": "%commands.delete%"
       },
       {
+        "command": "serialTerminal.viewReadOnlyDocument",
+        "title": "%commands.viewReadOnlyDocument%"
+      },
+      {
         "command": "doSomething",
         "icon": "$(play)",
         "title": "Serial Terminal: do something"
-      },
-      {
-        "command": "serialTerminal.viewReadOnlyDocument",
-        "title": "%commands.viewReadOnlyDocument%"
       }
     ],
     "configuration": {

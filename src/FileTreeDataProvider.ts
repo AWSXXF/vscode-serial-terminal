@@ -19,7 +19,6 @@ class FileTreeDataProvider implements vscode.TreeDataProvider<vscode.TreeItem>{
             command?: string
         }) {
         this.filePatton = '(' + filePattons.join('|') + ')$';
-        console.log({ filePatton: this.filePatton });
         this.uriGetter = uriGetter;
         this.options = options;
         this._watcher = fs.watch(this.uriGetter().fsPath, () => {
@@ -36,7 +35,18 @@ class FileTreeDataProvider implements vscode.TreeDataProvider<vscode.TreeItem>{
 
     getChildren(element?: vscode.TreeItem | undefined): vscode.ProviderResult<vscode.TreeItem[]> {
         return new Promise((resolve, reject) => {
-            const dirUri = this.uriGetter();
+            let dirUri: vscode.Uri;
+            if (element) {
+                if (!element.resourceUri) {
+                    reject()
+                    return;
+                } else {
+                    dirUri = element.resourceUri;
+                }
+            } else {
+                dirUri = this.uriGetter();
+            }
+
             var files;
             try {
                 files = fs.readdirSync(dirUri.fsPath);
@@ -46,15 +56,20 @@ class FileTreeDataProvider implements vscode.TreeDataProvider<vscode.TreeItem>{
 
             if (files) {
                 const treeItem = files.filter((file) => {
-                    return fs.statSync(vscode.Uri.joinPath(dirUri, file).fsPath).isFile() && file.match(this.filePatton);
+                    let stats = fs.statSync(vscode.Uri.joinPath(dirUri, file).fsPath);
+                    return stats.isDirectory() || stats.isFile() && file.match(this.filePatton);
                 }).map((file) => {
                     const item = new vscode.TreeItem(vscode.Uri.joinPath(dirUri, file));
-                    if (this.options?.command) {
-                        item.command = {
-                            title: "View",
-                            command: this.options.command,
-                            arguments: [item]
-                        };
+                    if (item.resourceUri && fs.statSync(item.resourceUri?.fsPath).isDirectory()) {
+                        item.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+                    } else {
+                        if (this.options?.command) {
+                            item.command = {
+                                title: "View",
+                                command: this.options.command,
+                                arguments: [item]
+                            };
+                        }
                     }
                     return item;
                 });
@@ -65,5 +80,6 @@ class FileTreeDataProvider implements vscode.TreeDataProvider<vscode.TreeItem>{
         });
     }
 }
+
 
 export { FileTreeDataProvider };
