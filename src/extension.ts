@@ -6,6 +6,7 @@ import { registerSerialPortView } from './serialPortView';
 import { registerLogView } from './logView';
 import { registerScriptNotebookController } from './scriptNotebookController';
 import { registerScriptView } from './scriptView';
+import { registerReadOnlyDocument } from './readOnlyDcoument';
 
 export var extensionContext: vscode.ExtensionContext;
 
@@ -18,6 +19,7 @@ export function activate(context: vscode.ExtensionContext) {
 	registerScriptNotebookSerializer(context);
 	registerScriptNotebookController(context);
 	registerContextCallback(context);
+	registerReadOnlyDocument(context);
 }
 
 export function deactivate() { }

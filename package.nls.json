@@ -9,7 +9,7 @@
     "commands.startSaveLog": "Save the log of the current terminal",
     "commands.stopSaveLog": "Stop saving the log of the current terminal",
     "commands.openTreeItemResource": "Open it in editor",
-    "commands.viewLog": "Reveal in view column",
+    "commands.viewReadOnlyDocument": "Reveal in view column",
     "commands.revealInExplorer": "Reveal in file explorer",
     "commands.openLogConfigaration": "open log setting",
     "commands.openScriptConfigaration": "Open script notebook setting",

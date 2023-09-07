@@ -9,7 +9,7 @@
     "commands.startSaveLog": "保存当前终端的日志",
     "commands.stopSaveLog": "停止保存当前终端的日志",
     "commands.openTreeItemResource": "在编辑器视图中打开",
-    "commands.viewLog": "在编辑器视图中打开",
+    "commands.viewReadOnlyDocument": "在只读编辑器视图中打开",
     "commands.revealInExplorer": "在文件资源管理器中打开",
     "commands.openLogConfigaration": "打开日志设置",
     "commands.openScriptConfigaration": "打开脚本notebook设置",

@@ -37,8 +37,8 @@ const logProvider = new (class implements vscode.TreeDataProvider<vscode.TreeIte
                     const item = new vscode.TreeItem(vscode.Uri.joinPath(logDirUri, file));
                     item.command = {
                         title: "View",
-                        command: "serialTerminal.viewLog",
-                        arguments: [item]
+                        command: "serialTerminal.viewReadOnlyDocument",
+                        arguments: [item.resourceUri]
                     };
                     return item;
                 });

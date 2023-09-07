@@ -193,11 +193,6 @@
         "title": "%commands.openTreeItemResource%"
       },
       {
-        "icon": "$(arrow-right)",
-        "command": "serialTerminal.viewLog",
-        "title": "%commands.viewLog%"
-      },
-      {
         "command": "serialTerminal.revealInExplorer",
         "icon": "$(file-directory)",
         "title": "%commands.revealInExplorer%"
@@ -216,6 +211,10 @@
         "command": "doSomething",
         "icon": "$(play)",
         "title": "Serial Terminal: do something"
+      },
+      {
+        "command": "serialTerminal.viewReadOnlyDocument",
+        "title": "%commands.viewReadOnlyDocument%"
       }
     ],
     "configuration": {

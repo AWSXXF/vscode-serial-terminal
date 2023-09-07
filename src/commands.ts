@@ -70,13 +70,6 @@ export function registerCommands(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(
         vscode.commands.registerCommand(
-            "serialTerminal.viewLog",
-            viewLog
-        )
-    );
-
-    context.subscriptions.push(
-        vscode.commands.registerCommand(
             "serialTerminal.revealInExplorer",
             revealInExplorer
         )
@@ -107,6 +100,13 @@ export function registerCommands(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand(
             "serialTerminal.deleteResource",
             deleteResource
+        )
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            "serialTerminal.viewReadOnlyDocument",
+            viewReadOnlyDocument
         )
     );
 
@@ -166,11 +166,6 @@ function stopSaveLog() {
     setSerialPortTernimalRecordingLog(serialPortTerminal.stopSave() ? false : true);
 }
 
-function viewLog(context: vscode.TreeItem) {
-    openTreeItemResource(context);
-    vscode.commands.executeCommand("workbench.action.files.setActiveEditorReadonlyInSession", context.resourceUri);
-}
-
 function openTreeItemResource(context: vscode.TreeItem) {
     vscode.commands.executeCommand("vscode.open", context.resourceUri);
 }
@@ -199,5 +194,10 @@ async function deleteResource(context: vscode.TreeItem) {
     if (context.resourceUri) {
         await vscode.workspace.fs.delete(context.resourceUri);
     }
+}
+
+async function viewReadOnlyDocument(uri: vscode.Uri) {
+    const doc = await vscode.workspace.openTextDocument(vscode.Uri.parse('readonly:' + uri.path));
+    await vscode.window.showTextDocument(doc, { preview: false });
 }
 
