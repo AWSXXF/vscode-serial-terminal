@@ -35,6 +35,9 @@
     "onStartupFinished"
   ],
   "main": "./out/extension.js",
+  "extensionPack": [
+    "awsxxf.serialterminal"
+  ],
   "contributes": {
     "viewsContainers": {
       "activitybar": [
