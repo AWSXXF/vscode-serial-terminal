@@ -16,6 +16,12 @@ export function activate(context: vscode.ExtensionContext) {
 	registerScriptView(context);
 	registerContextCallback(context);
 	registerReadOnlyDocument(context);
+
+	// vscode.workspace.onDidChangeConfiguration((event) => {
+	// 	if (event.affectsConfiguration('files.autoSave')) {
+	// 		console.log("my setting change");
+	// 	}
+	// });
 }
 
 export function deactivate() { }

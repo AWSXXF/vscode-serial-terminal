@@ -18,7 +18,7 @@ function registerContextCallback(context: vscode.ExtensionContext) {
             }
 
             setSerialPortTernimalRecordingLog(
-                serialPortTerminal.isRecording ? true : false
+                serialPortTerminal.isRecordingLog ? true : false
             );
         }));
 }

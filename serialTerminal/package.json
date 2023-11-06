@@ -133,17 +133,6 @@
         }
       ]
     },
-    "notebooks": [
-      {
-        "type": "scrnb",
-        "displayName": "Script Notebook",
-        "selector": [
-          {
-            "filenamePattern": "*.scrnb"
-          }
-        ]
-      }
-    ],
     "commands": [
       {
         "command": "serialTerminal.openSerialPort",
@@ -242,15 +231,21 @@
           },
           "markdownDescription": "%configurations.serialPort.boudRate.description%"
         },
-        "SerialTerminal.log.savepath": {
-          "title": "%configurations.log.savepath.title%",
+        "SerialTerminal.log.savePath": {
+          "title": "%configurations.log.savePath.title%",
           "type": "string",
-          "markdownDescription": "%configurations.log.savepath.description%"
+          "markdownDescription": "%configurations.log.savePath.description%"
         },
-        "SerialTerminal.script.savepath": {
-          "title": "%configurations.script.savepath.title%",
+        "SerialTerminal.script.savePath": {
+          "title": "%configurations.script.savePath.title%",
           "type": "string",
-          "markdownDescription": "%configurations.script.savepath.description%"
+          "markdownDescription": "%configurations.script.savePath.description%"
+        },
+        "SerialTerminal.log.defaultAddingTimeStamp": {
+          "title": "%configurations.log.defaultAddingTimeStamp.title%",
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "%configurations.log.defaultAddingTimeStamp.description%"
         }
       }
     }

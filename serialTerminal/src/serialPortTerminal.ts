@@ -4,13 +4,13 @@ import * as fs from 'fs';
 import { ExtensionTerminalOptions, l10n } from 'vscode';
 import { SerialPort } from 'serialport';
 
-import { getLogUri } from './settingManager';
+import { getLogDefaultAddingTimeStamp, getLogUri } from './settingManager';
 
 interface ISerialPortTerminal {
     get portPath(): string;
     get baudRate(): number;
     get terminalName(): string;
-    get isRecording(): boolean;
+    get isRecordingLog(): boolean;
     get isOpen(): boolean;
     setBaudRate(baudRate: number): void;
     send(chunk: any, encoding?: BufferEncoding): boolean;
@@ -18,6 +18,7 @@ interface ISerialPortTerminal {
     reOpen(): void;
     startSaveLog(callback?: () => void): Promise<boolean>;
     stopSave(): boolean;
+    isAddingTimeStamp: boolean;
 }
 
 class SerialPortTerminal implements ISerialPortTerminal {
@@ -25,7 +26,7 @@ class SerialPortTerminal implements ISerialPortTerminal {
     private port: SerialPort;
     private terminal: vscode.Terminal | undefined;
     private writeEmitter: vscode.EventEmitter<string>;
-    private recording: boolean;
+    private _isRecordingLog: boolean;
     private logPath: vscode.Uri;
     private recordCallback: (data: any) => void;
 
@@ -42,18 +43,19 @@ class SerialPortTerminal implements ISerialPortTerminal {
         return name ? name : "";
     }
 
-    get isRecording() {
-        return this.recording;
+    get isRecordingLog() {
+        return this._isRecordingLog;
     }
 
     get isOpen() {
         return this.port.isOpen;
     }
 
+    isAddingTimeStamp = getLogDefaultAddingTimeStamp();
     constructor(portPath: string, baudRate: number, closeCallBack?: () => void) {
         var noticeMessage: string;
 
-        this.recording = false;
+        this._isRecordingLog = false;
         this.logPath = vscode.Uri.file("");
         this.recordCallback = () => { };
         this.writeEmitter = new vscode.EventEmitter<string>();
@@ -113,20 +115,28 @@ class SerialPortTerminal implements ISerialPortTerminal {
         });
     }
 
+    getTime() {
+        return new Date().toLocaleString('zh', {
+            year: '2-digit',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+        });
+    }
+
+    getTimeStamp(): string {
+        return `[${this.getTime()}] `;
+    }
+
     async startSaveLog(callback?: () => void): Promise<boolean> {
-        if (this.isRecording) {
+        if (this.isRecordingLog) {
             return false;
         }
         const fileName = await vscode.window.showInputBox({
             title: l10n.t("Please enter the log file name"),
-            value: "general_" + new Date().toLocaleString('zh', {
-                year: '2-digit',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-            }).replace(/[\/:]/g, '').replace(/ /g, '_'),
+            value: "general_" + this.getTime().replace(/[\/:]/g, '').replace(/ /g, '_'),
             valueSelection: [0, 7],
             prompt: l10n.t("Only letters, numbers, `_` and `-` are allowed"),
             validateInput: (value: string) => {
@@ -138,12 +148,24 @@ class SerialPortTerminal implements ISerialPortTerminal {
             return false;
         }
         this.logPath = vscode.Uri.joinPath(getLogUri(), fileName + ".log");
-        this.recording = true;
+        this._isRecordingLog = true;
 
         fs.writeFileSync(this.logPath.fsPath, "");
-        this.recordCallback = (data) => {
-            fs.appendFileSync(this.logPath.fsPath, data.toString().replaceAll('\r', ''));
-        };
+        if (this.isAddingTimeStamp) {
+            fs.writeFileSync(this.logPath.fsPath, "");
+            this.recordCallback = (data) => {
+                fs.appendFileSync(
+                    this.logPath.fsPath,
+                    data.toString()
+                        .replaceAll('\r', '')
+                        .replaceAll('\n', '\n' + this.getTimeStamp()));
+            };
+        } else {
+            this.recordCallback = (data) => {
+                fs.appendFileSync(this.logPath.fsPath, data.toString().replaceAll('\r', ''));
+            };
+        }
+
         this.port.addListener("data", this.recordCallback);
         if (callback) {
             callback();
@@ -152,9 +174,9 @@ class SerialPortTerminal implements ISerialPortTerminal {
     }
 
     stopSave(): boolean {
-        if (this.isRecording) {
+        if (this.isRecordingLog) {
             this.port.removeListener("data", this.recordCallback);
-            this.recording = false;
+            this._isRecordingLog = false;
             vscode.window.showInformationMessage(l10n.t("The logs have been saved in {0}", this.logPath?.fsPath));
             return true;
         }

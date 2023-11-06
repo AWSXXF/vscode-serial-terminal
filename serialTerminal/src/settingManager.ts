@@ -28,35 +28,50 @@ async function getSettingFolder(section: string, dialogTitle: string): Promise<v
 }
 
 function getLogUri(): vscode.Uri {
-    return getSettingFolderDefault('SerialTerminal.log.savepath', 'terminalLog');
+    let folderUri = getSettingFolderOrSetDefault('SerialTerminal.log.savePath', vscode.Uri.joinPath(
+        vscode.Uri.file(os.homedir()),
+        "serialTerminal",
+        'terminalLog'
+    ).fsPath);
+    return folderUri;
 }
 
 function getScriptUri(): vscode.Uri {
-    return getSettingFolderDefault('SerialTerminal.script.savepath', 'scriptNoteBook');
+    return getSettingFolderOrSetDefault('SerialTerminal.script.savePath', vscode.Uri.joinPath(
+        vscode.Uri.file(os.homedir()),
+        "serialTerminal",
+        'scriptNoteBook'
+    ).fsPath);
 }
 
-function getSettingFolderDefault(section: string, defaultName: string): vscode.Uri {
-    let folderPath = vscode.workspace.getConfiguration().get(section) as string;
+function getLogDefaultAddingTimeStamp(): boolean {
+    return getSettingOrSetDefault('SerialTerminal.log.defaultAddingTimeStamp', false);
+}
+
+function getSettingFolderOrSetDefault(section: string, defaultName: string): vscode.Uri {
+    let folderPath = getSettingOrSetDefault(section, defaultName);
     if (!fs.existsSync(folderPath)) {
-        folderPath = vscode.Uri.joinPath(
-            vscode.Uri.file(os.homedir()),
-            "serialTerminal",
-            defaultName
-        ).fsPath;
         fs.mkdirSync(folderPath, { recursive: true });
+    }
+    return vscode.Uri.file(folderPath);
+}
+
+function getSettingOrSetDefault<T>(section: string, defaultValue: T): T {
+    let value = vscode.workspace.getConfiguration().get<T>(section);
+    if (undefined === value || value === '') {
         vscode.workspace.getConfiguration().update(
             section,
-            folderPath,
+            defaultValue,
             vscode.ConfigurationTarget.Global
         );
+        return defaultValue;
     }
-
-    return vscode.Uri.file(folderPath);
+    return value;
 }
 
 export {
     getBoundRates,
     getLogUri,
     getScriptUri,
-    getSettingFolderDefault,
+    getLogDefaultAddingTimeStamp,
 };

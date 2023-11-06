@@ -15,9 +15,11 @@
     "commands.openScriptConfigaration": "Open script notebook setting",
     "commands.createScriptNotebook": "New script notebook",
     "configurations.serialPort.boudRate.description": "The `baud rate` option when opening the serial port, you can add a `custom baud rate` here",
-    "configurations.log.savepath.title": "Log path",
-    "configurations.log.savepath.description": "Set the path to the save log directory. e.g. `c:\\log` if not set, it will default to the `log` folder in the expansion path",
-    "configurations.script.savepath.title": "Script path",
-    "configurations.script.savepath.description": "Set the path to the save script notebook directory. e.g. `c:\\script` if not set, it will default to the `script` folder in the expansion path",
+    "configurations.log.savePath.title": "Log path",
+    "configurations.log.savePath.description": "Set the path to the save log directory. e.g. `c:\\log` if not set, it will default to the `log` folder in the expansion path",
+    "configurations.log.defaultAddingTimeStamp.title": "Add timestamps by default",
+    "configurations.log.defaultAddingTimeStamp.description": "Add timestamps to each line of the log by default",
+    "configurations.script.savePath.title": "Script path",
+    "configurations.script.savePath.description": "Set the path to the save script notebook directory. e.g. `c:\\script` if not set, it will default to the `script` folder in the expansion path",
     "commands.delete": "Delete"
 }

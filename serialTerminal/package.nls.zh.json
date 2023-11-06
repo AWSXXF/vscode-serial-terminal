@@ -15,9 +15,9 @@
     "commands.openScriptConfigaration": "打开脚本notebook设置",
     "commands.createScriptNotebook": "新的脚本notebook",
     "configurations.serialPort.boudRate.description": "打开串口时的`波特率`选项，你可以在这里添加`自定义波特率`",
-    "configurations.log.savepath.title": "日志路径",
-    "configurations.log.savepath.description": "设置保存日志目录的路径，例如：`c:\\log`，如果不设置，它将默认为扩展路径中的`log`文件夹",
-    "configurations.script.savepath.title": "脚本保存路径",
-    "configurations.script.savepath.description": "设置保存脚本目录的路径，例如：`c:\\script`，如果不设置，它将默认为扩展路径中的`script`文件夹",
+    "configurations.log.savePath.title": "日志路径",
+    "configurations.log.savePath.description": "设置保存日志目录的路径，例如：`c:\\log`，如果不设置，它将默认为扩展路径中的`log`文件夹",
+    "configurations.script.savePath.title": "脚本保存路径",
+    "configurations.script.savePath.description": "设置保存脚本目录的路径，例如：`c:\\script`，如果不设置，它将默认为扩展路径中的`script`文件夹",
     "commands.delete": "删除"
 }

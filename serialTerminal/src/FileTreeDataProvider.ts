@@ -38,7 +38,7 @@ class FileTreeDataProvider implements vscode.TreeDataProvider<vscode.TreeItem>{
             let dirUri: vscode.Uri;
             if (element) {
                 if (!element.resourceUri) {
-                    reject()
+                    reject();
                     return;
                 } else {
                     dirUri = element.resourceUri;
