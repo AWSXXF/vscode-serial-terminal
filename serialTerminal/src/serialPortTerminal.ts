@@ -1,121 +1,106 @@
+import { PseudoTerminal } from "./PseudoTerminal";
+import { l10n } from 'vscode';
 import * as vscode from 'vscode';
 import * as colors from 'colors';
 import * as fs from 'fs';
-import { ExtensionTerminalOptions, l10n } from 'vscode';
-import { SerialPort } from 'serialport';
+import { SerialPort } from "serialport";
+import { getLogDefaultAddingTimeStamp, getLogDirUri } from "./settingManager";
+import { pickBoudRate, pickSerialPort } from "./serialPortView";
 
-import { getLogDefaultAddingTimeStamp, getLogUri } from './settingManager';
+const terminalNamePrefix = "PORT: ";
+
+function isSerialPortTerminal(terminalName: String): boolean {
+    return terminalName.match(`^${terminalNamePrefix}.*`) ? true : false;
+}
+
+async function listSerialPort() {
+    return SerialPort.list();
+}
 
 interface ISerialPortTerminal {
-    get portPath(): string;
-    get baudRate(): number;
-    get terminalName(): string;
-    get isRecordingLog(): boolean;
-    get isOpen(): boolean;
-    setBaudRate(baudRate: number): void;
-    send(chunk: any, encoding?: BufferEncoding): boolean;
-    show(): void;
-    reOpen(): void;
-    startSaveLog(callback?: () => void): Promise<boolean>;
-    stopSave(): boolean;
-    isAddingTimeStamp: boolean;
+    readonly state: { loging: boolean; timeStamp: boolean; hex: boolean; };
+    readonly serialport: SerialPort;
+    readonly terminal: PseudoTerminal;
+    open(): void;
+    startLogging(timeStamp?: boolean): Promise<boolean>;
+    stopLogging(): boolean;
+    setCloseCallback(callback?: () => void): void;
 }
 
 class SerialPortTerminal implements ISerialPortTerminal {
-    private opts: ExtensionTerminalOptions;
-    private port: SerialPort;
-    private terminal: vscode.Terminal | undefined;
-    private writeEmitter: vscode.EventEmitter<string>;
-    private _isRecordingLog: boolean;
-    private logPath: vscode.Uri;
-    private recordCallback: (data: any) => void;
-
-    get portPath() {
-        return this.port.path;
-    }
-
-    get baudRate(): number {
-        return this.port.baudRate;
-    }
-
-    get terminalName() {
-        var name = this.terminal?.name;
-        return name ? name : "";
-    }
-
-    get isRecordingLog() {
-        return this._isRecordingLog;
-    }
-
-    get isOpen() {
-        return this.port.isOpen;
-    }
-
-    isAddingTimeStamp = getLogDefaultAddingTimeStamp();
-    constructor(portPath: string, baudRate: number, closeCallBack?: () => void) {
-        var noticeMessage: string;
-
-        this._isRecordingLog = false;
-        this.logPath = vscode.Uri.file("");
-        this.recordCallback = () => { };
-        this.writeEmitter = new vscode.EventEmitter<string>();
-        this.port = new SerialPort({ path: portPath, baudRate: baudRate }, () => {
-            noticeMessage = this.port.isOpen ?
-                colors.green.bold(l10n.t('({0}) CONNECTED\r\n\r\n', this.port.path))
-                : colors.red.bold(l10n.t('({0}) OPEN FAILED! \r\n\r\n', this.port.path));
-        });
-        this.port.addListener("data", (data) => {
-            this.writeEmitter.fire(data.toString());
-        });
-        this.port.on("close", () => {
-            this.writeEmitter.fire(colors.red.bold(l10n.t("({0}) CLOSED! \r\n\r\n", this.port.path)));
-        });
-
-        this.opts = {
-            pty: {
-                onDidWrite: this.writeEmitter.event,
-                open: () => {
-                    this.writeEmitter.fire(noticeMessage);
-                },
-                close: () => {
-                    this.port.close();
-                    if (closeCallBack) {
-                        closeCallBack();
-                    };
-                },
-                handleInput: (data) => {
-                    this.port.write(data);
-                }
-            },
-            name: `PORT: ${portPath}`
+    private constructor(serialPort: SerialPort, pseudo: boolean = false) {
+        this.state = {
+            loging: false,
+            timeStamp: getLogDefaultAddingTimeStamp(),
+            hex: false,
         };
-        this.terminal = vscode.window.createTerminal(this.opts);
-        this.terminal.show();
+        this.serialport = serialPort;
+        let opts = pseudo ? { create: false } : undefined;
+        this.terminal = new PseudoTerminal(terminalNamePrefix + serialPort.path, opts);
+        this.init();
     }
 
-    setBaudRate(baudRate: number): void {
-        this.port.update({ baudRate: baudRate });
+    private init() {
+        this.terminal.setOnInput(
+            (data) => this.serialport.write(data)
+        );
+        this.terminal.setOnOpen(() => {
+            this.terminal.write(this.serialport.isOpen ?
+                colors.green.bold(l10n.t('({0}) CONNECTED', this.serialport.path) + '\r\n\r\n')
+                : colors.red.bold(l10n.t('({0}) OPEN FAILED!', this.serialport.path) + '\r\n\r\n'));
+        });
+        this.terminal.setOnClose(() => {
+            this.serialport.close();
+            if (this.closeCallback) { this.closeCallback(); };
+        });
+
+        this.serialport.addListener("data", (data) =>
+            this.terminal.write(data.toString())
+        );
+
+        this.serialport.on("close", () => {
+            this.terminal.write(colors.red.bold(
+                "\n" + l10n.t("({0}) CLOSED!", this.serialport.path) + '\r\n\r\n'));
+        }
+        );
     }
 
-    show(): void {
-        this.terminal?.show();
-    }
-
-    send(chunk: any, encoding?: BufferEncoding | undefined): boolean {
-        return this.port.write(chunk, encoding);
-    }
-
-    reOpen(): void {
-        this.port.open(() => {
-            this.writeEmitter.fire(
-                this.port.isOpen ?
-                    colors.green.bold(l10n.t('({0}) CONNECTED\r\n\r\n', this.port.path))
-                    : colors.red.bold(l10n.t('({0}) OPEN FAILED! \r\n\r\n', this.port.path))
-            );
+    static async new(path: string, baudRate: number): Promise<ISerialPortTerminal> {
+        return new Promise<SerialPortTerminal>((resolve, reject) => {
+            let serialPort = new SerialPort({ path: path, baudRate: baudRate }, () => {
+                resolve(new SerialPortTerminal(serialPort));
+            });
         });
     }
 
-    getTime() {
+    static async newOpt(): Promise<ISerialPortTerminal> {
+        return new Promise<ISerialPortTerminal>(async (resolve, reject) => {
+            const portPath = await pickSerialPort();
+            if (!portPath) { reject(); return; }
+            const baudRate = await pickBoudRate();
+            if (!baudRate) { reject(); return; }
+            let serialPort = new SerialPort({ path: portPath, baudRate: baudRate }, () => {
+                const serialPortTerminal = new SerialPortTerminal(serialPort, true);
+                if (serialPortTerminal.terminal.options) { resolve(serialPortTerminal); }
+                else { reject(); }
+            });
+        });
+    }
+
+    setCloseCallback(callback?: () => void): void { this.closeCallback = callback; }
+
+    state: { loging: boolean; timeStamp: boolean; hex: boolean; };
+
+    open(): void {
+        if (this.serialport.isOpen) { return; }
+        this.serialport.open(() => {
+            this.terminal.write(this.serialport.isOpen ?
+                colors.green.bold(l10n.t('({0}) CONNECTED', this.serialport.path) + '\r\n\r\n')
+                : colors.red.bold(l10n.t('({0}) OPEN FAILED!', this.serialport.path) + '\r\n\r\n'));
+        });
+    }
+
+    private getTime() {
         return new Date().toLocaleString('zh', {
             year: '2-digit',
             month: '2-digit',
@@ -126,62 +111,76 @@ class SerialPortTerminal implements ISerialPortTerminal {
         });
     }
 
-    getTimeStamp(): string {
-        return `[${this.getTime()}] `;
-    }
+    private getTimeStamp(): string { return `[${this.getTime()}] `; }
 
-    async startSaveLog(callback?: () => void): Promise<boolean> {
-        if (this.isRecordingLog) {
-            return false;
-        }
-        const fileName = await vscode.window.showInputBox({
+    private async getLogUri(): Promise<vscode.Uri | undefined> {
+        let fileName = await vscode.window.showInputBox({
             title: l10n.t("Please enter the log file name"),
             value: "general_" + this.getTime().replace(/[\/:]/g, '').replace(/ /g, '_'),
             valueSelection: [0, 7],
             prompt: l10n.t("Only letters, numbers, `_` and `-` are allowed"),
             validateInput: (value: string) => {
                 const result = value.match(/^[0-9a-zA-Z_-]*$/g)?.toString();
-                return result ? undefined : l10n.t("Only letters, numbers, `_` and `-` are allowed");
+                return result ? undefined
+                    : l10n.t("Only letters, numbers, `_` and `-` are allowed");
             }
         });
-        if (!fileName) {
-            return false;
-        }
-        this.logPath = vscode.Uri.joinPath(getLogUri(), fileName + ".log");
-        this._isRecordingLog = true;
+        if (fileName) {
+            return vscode.Uri.joinPath(getLogDirUri(), fileName + ".log");
+        } else { return undefined; }
+    }
 
-        fs.writeFileSync(this.logPath.fsPath, "");
-        if (this.isAddingTimeStamp) {
-            fs.writeFileSync(this.logPath.fsPath, "");
-            this.recordCallback = (data) => {
+    private getLogCallBack(logUri: vscode.Uri) {
+        fs.writeFileSync(logUri.fsPath, "");
+        if (this.state.timeStamp) {
+            return (data: any) => {
                 fs.appendFileSync(
-                    this.logPath.fsPath,
+                    logUri.fsPath,
                     data.toString()
                         .replaceAll('\r', '')
                         .replaceAll('\n', '\n' + this.getTimeStamp()));
             };
         } else {
-            this.recordCallback = (data) => {
-                fs.appendFileSync(this.logPath.fsPath, data.toString().replaceAll('\r', ''));
+            return (data: any) => {
+                fs.appendFileSync(logUri.fsPath, data.toString().replaceAll('\r', ''));
             };
         }
-
-        this.port.addListener("data", this.recordCallback);
-        if (callback) {
-            callback();
-        }
-        return true;
     }
 
-    stopSave(): boolean {
-        if (this.isRecordingLog) {
-            this.port.removeListener("data", this.recordCallback);
-            this._isRecordingLog = false;
-            vscode.window.showInformationMessage(l10n.t("The logs have been saved in {0}", this.logPath?.fsPath));
-            return true;
+    async startLogging(timeStamp?: boolean | undefined): Promise<boolean> {
+        if (this.state.loging) { return this.state.loging; }
+        const logUri = await this.getLogUri();
+        if (!logUri) { return this.state.loging; } else {
+            this.logUri = logUri;
         }
-        return false;
+        if (timeStamp) { this.state.timeStamp = timeStamp; }
+        this.logCallBack = this.getLogCallBack(this.logUri);
+        this.serialport.addListener("data", this.logCallBack);
+        this.state.loging = true;
+        return this.state.loging;
     }
+
+    stopLogging(): boolean {
+        if (!this.state.loging) { return false; }
+        this.serialport.removeListener("data", this.logCallBack);
+        vscode.window.showInformationMessage(
+            l10n.t("The logs have been saved in {0}", this.logUri.fsPath));
+        this.state.loging = false;
+        return this.state.loging;
+    }
+
+    serialport: SerialPort;
+    terminal: PseudoTerminal;
+
+    private logUri: vscode.Uri = vscode.Uri.file("");
+    private logCallBack: (data: any) => void = () => { };
+    private closeCallback?: () => void;
 }
 
-export { ISerialPortTerminal, SerialPortTerminal };
+export {
+    ISerialPortTerminal,
+    SerialPortTerminal,
+    listSerialPort,
+    isSerialPortTerminal,
+    terminalNamePrefix
+};

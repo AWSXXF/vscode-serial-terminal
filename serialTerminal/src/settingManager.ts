@@ -6,28 +6,7 @@ function getBoundRates(): Array<number> {
     return vscode.workspace.getConfiguration().get('SerialTerminal.serial port.Boud Rate') as Array<number>;
 }
 
-async function getSettingFolder(section: string, dialogTitle: string): Promise<vscode.Uri | undefined> {
-    let logPath = vscode.workspace.getConfiguration().get(section) as string;
-    if (logPath === '' || !fs.existsSync(logPath)) {
-        const folderUri = await vscode.window.showOpenDialog({
-            canSelectFolders: true,
-            title: dialogTitle
-        });
-        if (folderUri && folderUri.length === 1) {
-            vscode.workspace.getConfiguration().update(
-                section,
-                folderUri[0].fsPath,
-                vscode.ConfigurationTarget.Global
-            );
-            logPath = folderUri[0].fsPath;
-        } else {
-            return;
-        }
-    }
-    return vscode.Uri.file(logPath);
-}
-
-function getLogUri(): vscode.Uri {
+function getLogDirUri(): vscode.Uri {
     let folderUri = getSettingFolderOrSetDefault('SerialTerminal.log.savePath', vscode.Uri.joinPath(
         vscode.Uri.file(os.homedir()),
         "serialTerminal",
@@ -36,7 +15,7 @@ function getLogUri(): vscode.Uri {
     return folderUri;
 }
 
-function getScriptUri(): vscode.Uri {
+function getScriptDirUri(): vscode.Uri {
     return getSettingFolderOrSetDefault('SerialTerminal.script.savePath', vscode.Uri.joinPath(
         vscode.Uri.file(os.homedir()),
         "serialTerminal",
@@ -71,7 +50,7 @@ function getSettingOrSetDefault<T>(section: string, defaultValue: T): T {
 
 export {
     getBoundRates,
-    getLogUri,
-    getScriptUri,
+    getLogDirUri,
+    getScriptDirUri,
     getLogDefaultAddingTimeStamp,
 };

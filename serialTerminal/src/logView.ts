@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
-import * as fs from 'fs';
-import { getLogUri } from './settingManager';
+import { getLogDirUri } from './settingManager';
 import { FileTreeDataProvider } from './FileTreeDataProvider';
 
 
@@ -10,7 +9,7 @@ function registerLogView(context: vscode.ExtensionContext) {
             "serialport.logs",
             new FileTreeDataProvider(
                 ['.txt', '.log'],
-                getLogUri,
+                getLogDirUri,
                 {
                     command: "serialTerminal.openTreeItemResource",
                     readdirErrorMessagePrefix: vscode.l10n.t("Script path error: ")

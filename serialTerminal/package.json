@@ -67,6 +67,14 @@
         }
       ]
     },
+    "terminal": {
+      "profiles": [
+        {
+          "id": "serialPortTerminal",
+          "title": "%serialPortTerminal%"
+        }
+      ]
+    },
     "menus": {
       "view/title": [
         {
@@ -206,7 +214,7 @@
       {
         "command": "doSomething",
         "icon": "$(play)",
-        "title": "Serial Terminal: do something"
+        "title": "Serial Terminal test: do something"
       }
     ],
     "configuration": {

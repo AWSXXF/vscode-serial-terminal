@@ -1,8 +1,7 @@
 import * as vscode from "vscode";
-import * as colors from 'colors';
 import { getBoundRates } from "./settingManager";
-import { SerialPort } from "serialport";
 import { Event, ProviderResult, TreeDataProvider, TreeItem, l10n } from "vscode";
+import { listSerialPort } from "./serialPortTerminal";
 
 function registerSerialPortView(context: vscode.ExtensionContext) {
     context.subscriptions.push(
@@ -23,7 +22,7 @@ const serialPortProvider = new (class implements TreeDataProvider<TreeItem> {
     getChildren(element?: TreeItem | undefined): ProviderResult<TreeItem[]> {
         return new Promise((resolve, reject) => {
             // 使用 serialport 模块获取可用的串口设备
-            SerialPort.list()
+            listSerialPort()
                 .then((ports) => {
                     const treeItem = ports.map((port) => {
                         return {
@@ -48,7 +47,7 @@ function updateSerialPortProvider() {
 
 async function pickSerialPort(): Promise<string | undefined> {
     const serialPortItems: Thenable<vscode.QuickPickItem[]> = new Promise((resolve, reject) => {
-        SerialPort.list().then((ports) => {
+        listSerialPort().then((ports) => {
             const portItems: vscode.QuickPickItem[] = ports.map((port) => {
                 return { label: port.path, description: port.manufacturer };
             });
@@ -74,21 +73,9 @@ function boudRates(): Thenable<vscode.QuickPickItem[]> {
     });
 }
 
-function getSerialPort(path: string, boudRate: number): SerialPort | undefined {
-    var getPortSuccess = true;
-    const port = new SerialPort({ path: path, baudRate: boudRate }, (err) => {
-        if (err) {
-            getPortSuccess = false;
-            vscode.window.showErrorMessage(err.message);
-        }
-    });
-    return getPortSuccess ? port : undefined;
-}
-
 export {
     registerSerialPortView,
     updateSerialPortProvider,
     pickSerialPort,
     pickBoudRate,
-    // getSerialPort
 };

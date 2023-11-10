@@ -21,5 +21,6 @@
     "configurations.log.defaultAddingTimeStamp.description": "Add timestamps to each line of the log by default",
     "configurations.script.savePath.title": "Script path",
     "configurations.script.savePath.description": "Set the path to the save script notebook directory. e.g. `c:\\script` if not set, it will default to the `script` folder in the expansion path",
-    "commands.delete": "Delete"
+    "commands.delete": "Delete",
+    "serialPortTerminal": "串口终端"
 }

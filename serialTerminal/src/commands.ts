@@ -2,10 +2,10 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 
 import { pickBoudRate, pickSerialPort, updateSerialPortProvider } from './serialPortView';
-import { SerialPortTerminalManager } from './serialPortTerminalManager';
+import { serialPortTerminalManager } from "./serialPortTerminalManager";
 import { setSerialPortTernimalRecordingLog } from './contextManager';
 import { l10n } from 'vscode';
-import { getLogUri, getScriptUri } from './settingManager';
+import { getLogDirUri, getScriptDirUri } from './settingManager';
 
 function registerCommands(context: vscode.ExtensionContext) {
     context.subscriptions.push(
@@ -85,14 +85,14 @@ function registerCommands(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand(
             "serialTerminal.revealScriptNoteBooks",
-            () => vscode.commands.executeCommand("revealFileInOS", getScriptUri())
+            () => vscode.commands.executeCommand("revealFileInOS", getScriptDirUri())
         )
     );
 
     context.subscriptions.push(
         vscode.commands.registerCommand(
             "serialTerminal.revealLogs",
-            () => vscode.commands.executeCommand("revealFileInOS", getLogUri())
+            () => vscode.commands.executeCommand("revealFileInOS", getLogDirUri())
         )
     );
 
@@ -116,24 +116,21 @@ function registerCommands(context: vscode.ExtensionContext) {
 
 async function openSerialPort(context?: any) {
     let portPath, boudRate;
-    var serialPortTerminals = SerialPortTerminalManager.getInstance();
     if (!context) {
         portPath = await pickSerialPort();
     } else {
         portPath = context.label;
     }
 
-    let existTerminal = serialPortTerminals.getFromPortPath(portPath);
-    if (existTerminal?.isOpen) {
-        existTerminal.show();
+    let existTerminal = serialPortTerminalManager.getFromPortPath(portPath);
+    if (existTerminal?.serialport.isOpen) {
+        existTerminal.terminal.show();
         return;
     }
     boudRate = await pickBoudRate();
 
     if (portPath && boudRate) {
-        serialPortTerminals.showSerialPortTerminal(portPath, boudRate, () => {
-            updateSerialPortProvider();
-        });
+        await serialPortTerminalManager.showSerialPortTerminal(portPath, boudRate);
     }
 }
 
@@ -143,12 +140,12 @@ async function startSaveLog() {
         return;
     }
 
-    const serialPortTerminal = SerialPortTerminalManager.getInstance().getFromTerminal(terminal);
+    const serialPortTerminal = serialPortTerminalManager.getFromTerminal(terminal);
     if (!serialPortTerminal) {
         return;
     }
 
-    setSerialPortTernimalRecordingLog(await serialPortTerminal.startSaveLog());
+    setSerialPortTernimalRecordingLog(await serialPortTerminal.startLogging());
 }
 
 function stopSaveLog() {
@@ -158,12 +155,12 @@ function stopSaveLog() {
         return;
     }
 
-    const serialPortTerminal = SerialPortTerminalManager.getInstance().getFromTerminal(terminal);
+    const serialPortTerminal = serialPortTerminalManager.getFromTerminal(terminal);
     if (!serialPortTerminal) {
         return;
     }
 
-    setSerialPortTernimalRecordingLog(serialPortTerminal.stopSave() ? false : true);
+    setSerialPortTernimalRecordingLog(serialPortTerminal.stopLogging());
 }
 
 function openTreeItemResource(context: vscode.TreeItem) {
@@ -186,7 +183,7 @@ async function createScriptNotebook() {
     if (!fileName) {
         return false;
     }
-    const scriptNotebookFile = vscode.Uri.joinPath(getScriptUri(), fileName + ".scrnb");
+    const scriptNotebookFile = vscode.Uri.joinPath(getScriptDirUri(), fileName + ".scrnb");
     fs.writeFileSync(scriptNotebookFile.fsPath, "");
     vscode.commands.executeCommand("vscode.open", scriptNotebookFile);
 }

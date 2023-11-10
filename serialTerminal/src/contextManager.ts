@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
-import { SerialPortTerminalManager } from './serialPortTerminalManager';
+import { serialPortTerminalManager } from './serialPortTerminalManager';
+import { isSerialPortTerminal } from './serialPortTerminal';
 
 function registerContextCallback(context: vscode.ExtensionContext) {
     context.subscriptions.push(
@@ -7,19 +8,17 @@ function registerContextCallback(context: vscode.ExtensionContext) {
             if (!terminal) {
                 return;
             }
-            const serialPortTerminal = SerialPortTerminalManager.getInstance().getFromTerminal(terminal);
+            const serialPortTerminal = serialPortTerminalManager.getFromTerminal(terminal);
             if (!serialPortTerminal) {
                 setSerialPortTernimalFocus(false);
                 return;
             } else {
                 setSerialPortTernimalFocus(
-                    terminal?.name.match('^PORT: .*') ? true : false
+                    (terminal) && isSerialPortTerminal(terminal.name)
                 );
             }
 
-            setSerialPortTernimalRecordingLog(
-                serialPortTerminal.isRecordingLog ? true : false
-            );
+            setSerialPortTernimalRecordingLog(serialPortTerminal.state.loging);
         }));
 }
 

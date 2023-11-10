@@ -1,55 +1,56 @@
 import * as vscode from 'vscode';
-import { ISerialPortTerminal, SerialPortTerminal } from './serialPortTerminal';
+import { ISerialPortTerminal, SerialPortTerminal, terminalNamePrefix } from './serialPortTerminal';
+import { TerminalProfile } from 'vscode';
 
-interface ISerialPortTerminalManager {
-    getInstance(): ISerialPortTerminalManager;
-    showSerialPortTerminal(portPath: string, baudRate: number, closeCallback?: () => void): void;
-    getFromTerminal(terminal: vscode.Terminal): ISerialPortTerminal | undefined;
-    getFromPortPath(portName: string): ISerialPortTerminal | undefined;
-    remove(terminalName: string): boolean;
-}
-
-
-class SerialPortTerminalManager implements ISerialPortTerminalManager {
+const serialPortTerminalManager = new (class {
     private serialPortTerminals = new Map<string, ISerialPortTerminal>();
-    private static instance: ISerialPortTerminalManager;
-    private constructor() { }
-    getInstance(): ISerialPortTerminalManager {
-        return SerialPortTerminalManager.getInstance();
-    }
-    static getInstance(): ISerialPortTerminalManager {
-        if (!this.instance) {
-            this.instance = new SerialPortTerminalManager();
-        }
-        return this.instance;
-    }
-
-    showSerialPortTerminal(portPath: string, baudRate: number, closeCallback?: (() => void) | undefined): void {
+    async showSerialPortTerminal(portPath: string, baudRate: number, closeCallback?: () => void): Promise<void> {
         var exist = this.getFromPortPath(portPath);
         if (exist) {
-            if (exist.baudRate !== baudRate) {
-                exist.setBaudRate(baudRate);
+            if (exist.serialport.baudRate !== baudRate) {
+                exist.serialport.update({ baudRate: baudRate });
             }
-            if (!exist.isOpen) {
-                exist.reOpen();
+            if (!exist.serialport.isOpen) {
+                exist.open();
             }
-            exist.show();
+            exist.terminal.show();
         } else {
-            var serialTerminal = new SerialPortTerminal(portPath, baudRate, () => {
-                this.remove(`PORT: ${portPath}`);
+            var serialPortTerminal = await SerialPortTerminal.new(portPath, baudRate);
+            serialPortTerminal.setCloseCallback(() => {
+                return this.remove(portPath);
             });
-            this.serialPortTerminals.set(serialTerminal.terminalName, serialTerminal);
+            this.serialPortTerminals.set(serialPortTerminal.terminal.name, serialPortTerminal);
+            serialPortTerminal.terminal.show();
         }
     }
+
+    getSerialPortTerminalProfile(): Promise<TerminalProfile> {
+        return new Promise<TerminalProfile>(async (resolve, reject) => {
+            const serialPortTerminal = await SerialPortTerminal.newOpt();
+            const opts = serialPortTerminal.terminal.options;
+            if (opts) {
+                this.serialPortTerminals.set(serialPortTerminal.terminal.name, serialPortTerminal);
+                serialPortTerminal.setCloseCallback(() => {
+                    this.remove(serialPortTerminal.terminal.name);
+                });
+                resolve(new TerminalProfile(opts));
+            } else {
+                reject();
+            }
+        });
+    }
+
     getFromTerminal(terminal: vscode.Terminal): ISerialPortTerminal | undefined {
         return this.serialPortTerminals.get(terminal.name);
     }
+
     getFromPortPath(portPath: string): ISerialPortTerminal | undefined {
-        return this.serialPortTerminals.get(`PORT: ${portPath}`);
+        return this.serialPortTerminals.get(terminalNamePrefix + portPath);
     }
+
     remove(terminalName: string): boolean {
         return this.serialPortTerminals.delete(terminalName);
     }
-}
+})();
 
-export { SerialPortTerminalManager };
+export { serialPortTerminalManager };

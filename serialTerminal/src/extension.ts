@@ -5,6 +5,7 @@ import { registerSerialPortView } from './serialPortView';
 import { registerLogView } from './logView';
 import { registerScriptView } from './scriptView';
 import { registerReadOnlyDocument } from './readOnlyDcoument';
+import { registerSerialPortTerminalProfile } from './SerialTerminalProfileProvider';
 
 export var extensionContext: vscode.ExtensionContext;
 
@@ -16,12 +17,7 @@ export function activate(context: vscode.ExtensionContext) {
 	registerScriptView(context);
 	registerContextCallback(context);
 	registerReadOnlyDocument(context);
-
-	// vscode.workspace.onDidChangeConfiguration((event) => {
-	// 	if (event.affectsConfiguration('files.autoSave')) {
-	// 		console.log("my setting change");
-	// 	}
-	// });
+	registerSerialPortTerminalProfile(context);
 }
 
 export function deactivate() { }
