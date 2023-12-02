@@ -17,7 +17,7 @@ const serialPortTerminalManager = new (class {
         } else {
             var serialPortTerminal = await SerialPortTerminal.new(portPath, baudRate);
             serialPortTerminal.setCloseCallback(() => {
-                return this.remove(portPath);
+                this.remove(serialPortTerminal.terminal.name);
             });
             this.serialPortTerminals.set(serialPortTerminal.terminal.name, serialPortTerminal);
             serialPortTerminal.terminal.show();
