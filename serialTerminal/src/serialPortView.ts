@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { getBoundRates } from "./settingManager";
-import { Event, ProviderResult, TreeDataProvider, TreeItem, l10n } from "vscode";
-import { listSerialPort } from "./serialPortTerminal";
+import { Event, ProviderResult, ThemeIcon, TreeDataProvider, TreeItem, l10n } from "vscode";
+import { listSerialPort, serialPortInfo2String } from "./serialPortTerminal";
 
 function registerSerialPortView(context: vscode.ExtensionContext) {
     context.subscriptions.push(
@@ -27,9 +27,9 @@ const serialPortProvider = new (class implements TreeDataProvider<TreeItem> {
                     const treeItem = ports.map((port) => {
                         return {
                             label: port.path,
-                            description: port.manufacturer,
-                            tooltip: `PID: ${port.productId} VID: ${port.vendorId}`,
-                            // iconPath: vscode.Uri.joinPath(extensionContext.extensionUri, 'assets/icon/plug.svg')
+                            description: (port as any).friendlyName || port.manufacturer,
+                            tooltip: serialPortInfo2String(port),
+                            iconPath: new ThemeIcon("plug"),
                         };
                     });
                     resolve(treeItem);

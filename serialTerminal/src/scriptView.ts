@@ -11,7 +11,8 @@ function registerScriptView(context: vscode.ExtensionContext) {
                 getScriptDirUri,
                 {
                     command: "serialTerminal.openTreeItemResource",
-                    readdirErrorMessagePrefix: vscode.l10n.t("Script path error: ")
+                    readdirErrorMessagePrefix: vscode.l10n.t("Script path error: "),
+                    icon: new vscode.ThemeIcon("notebook"),
                 }
             )
         )

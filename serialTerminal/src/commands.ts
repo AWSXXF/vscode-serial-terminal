@@ -110,6 +110,13 @@ function registerCommands(context: vscode.ExtensionContext) {
         )
     );
 
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            "serialTerminal.clearTerminal",
+            clearTerminal,
+        )
+    );
+
     vscode.commands.registerCommand("doSomething", async (context) => {
     });
 }
@@ -173,7 +180,7 @@ function revealInExplorer(context: vscode.TreeItem) {
 
 async function createScriptNotebook() {
     const fileName = await vscode.window.showInputBox({
-        title: "Please enter the script notebook file name",
+        title: l10n.t("Please enter the script notebook file name"),
         prompt: l10n.t("Only letters, numbers, `_` and `-` are allowed"),
         validateInput: (value: string) => {
             const result = value.match(/^[0-9a-zA-Z_-]*$/g)?.toString();
@@ -196,6 +203,12 @@ async function deleteResource(context: vscode.TreeItem) {
 async function viewReadOnlyDocument(uri: vscode.Uri) {
     const doc = await vscode.workspace.openTextDocument(vscode.Uri.parse('readonly:' + uri.path));
     await vscode.window.showTextDocument(doc, { preview: false });
+}
+
+function clearTerminal() {
+    vscode.commands.executeCommand(
+        "workbench.action.terminal.clear"
+    );
 }
 
 export { registerCommands };

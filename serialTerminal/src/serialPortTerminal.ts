@@ -17,6 +17,33 @@ async function listSerialPort() {
     return SerialPort.list();
 }
 
+function serialPortInfo2String(portInfo: import("@serialport/bindings-cpp").PortInfo): string {
+    let info = new Map<string, string>();
+    let portInfoAny = portInfo as any;
+
+    if (portInfoAny.friendlyName) { info.set("Name", portInfoAny.friendlyName); }
+    if (portInfoAny.path) { info.set("Path", portInfoAny.path); }
+    if (portInfoAny.manufacturer) { info.set("Manufacturer", portInfoAny.manufacturer); }
+    if (portInfoAny.vendorId) { info.set("VendorId", portInfoAny.vendorId); }
+    if (portInfoAny.productId) { info.set("ProductId", portInfoAny.productId); }
+    if (portInfoAny.serialNumber) { info.set("SerialNumber", portInfoAny.serialNumber); }
+    if (portInfoAny.pnpId) { info.set("PnpId", portInfoAny.pnpId); }
+    if (portInfoAny.locationId) { info.set("LocationId", portInfoAny.locationId); }
+
+    let maxWidth = 0;
+    info.forEach((_, key) => {
+        maxWidth = Math.max(key.length, maxWidth);
+    });
+
+    let infoString = "";
+    info.forEach((value, key) => {
+        infoString += `${l10n.t(key)}: ${value}\n`;
+    });
+
+
+    return infoString;
+}
+
 interface ISerialPortTerminal {
     readonly state: { loging: boolean; timeStamp: boolean; hex: boolean; };
     readonly serialport: SerialPort;
@@ -182,5 +209,6 @@ export {
     SerialPortTerminal,
     listSerialPort,
     isSerialPortTerminal,
-    terminalNamePrefix
+    terminalNamePrefix,
+    serialPortInfo2String
 };

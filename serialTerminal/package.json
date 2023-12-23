@@ -122,6 +122,12 @@
           "when": "view == terminal && serialTerminal.serialPortTernimalFocus && serialTerminal.serialPortTernimalRecordingLog",
           "group": "navigation"
         }
+        ,
+        {
+          "command": "serialTerminal.clearTerminal",
+          "when": "view == terminal",
+          "group": "navigation"
+        }
       ],
       "view/item/context": [
         {
@@ -210,6 +216,11 @@
       {
         "command": "serialTerminal.viewReadOnlyDocument",
         "title": "%commands.viewReadOnlyDocument%"
+      },
+      {
+        "command": "serialTerminal.clearTerminal",
+        "icon": "$(clear-all)",
+        "title": "%commands.clearTerminal%"
       },
       {
         "command": "doSomething",

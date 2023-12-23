@@ -12,7 +12,8 @@ function registerLogView(context: vscode.ExtensionContext) {
                 getLogDirUri,
                 {
                     command: "serialTerminal.openTreeItemResource",
-                    readdirErrorMessagePrefix: vscode.l10n.t("Script path error: ")
+                    readdirErrorMessagePrefix: vscode.l10n.t("Log path error: "),
+                    icon: new vscode.ThemeIcon("output"),
                 }
             )
         )

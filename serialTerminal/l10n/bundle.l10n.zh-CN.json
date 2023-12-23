@@ -10,6 +10,15 @@
   "Script path error: ": "脚本保存路径错误: ",
   "Only letters, numbers, `_` and `-` are allowed": "仅支持输入字母、数字、`_`和`-`",
   "Please enter the log file name": "请输入日志文件名",
+  "Please enter the script notebook file name": "请输入notebook文件名",
   "The logs have been saved in {0}": "日志已经保存在: {0}",
-  "the log path `{0}` no found": "未找到日志保存路径 `{0}`"
+  "the log path `{0}` no found": "未找到日志保存路径 `{0}`",
+  "Name": "名称",
+  "Path": "路径",
+  "Manufacturer": "厂商",
+  "VendorId": "厂商ID",
+  "ProductId": "产品ID",
+  "SerialNumber": "序列号",
+  "PnpId": "即插即用ID",
+  "LocationId": "硬件路径ID"
 }

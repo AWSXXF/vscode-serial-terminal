@@ -1,12 +1,14 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
+import { ThemeIcon, Uri } from 'vscode';
 
 class FileTreeDataProvider implements vscode.TreeDataProvider<vscode.TreeItem>{
     private filePatton: string;
     private uriGetter: (() => vscode.Uri);
     private options?: {
         readdirErrorMessagePrefix?: string,
-        command?: string
+        command?: string,
+        icon?: string | Uri | { light: string | Uri; dark: string | Uri; } | ThemeIcon,
     };
     private updateEmitter = new vscode.EventEmitter<void>();
     private _watcher;
@@ -17,6 +19,7 @@ class FileTreeDataProvider implements vscode.TreeDataProvider<vscode.TreeItem>{
         options?: {
             readdirErrorMessagePrefix?: string,
             command?: string
+            icon?: string | Uri | { light: string | Uri; dark: string | Uri; } | ThemeIcon,
         }) {
         this.filePatton = '(' + filePattons.join('|') + ')$';
         this.uriGetter = uriGetter;
@@ -67,8 +70,9 @@ class FileTreeDataProvider implements vscode.TreeDataProvider<vscode.TreeItem>{
                             item.command = {
                                 title: "View",
                                 command: this.options.command,
-                                arguments: [item]
+                                arguments: [item],
                             };
+                            item.iconPath = this.options.icon;
                         }
                     }
                     return item;

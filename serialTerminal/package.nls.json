@@ -22,5 +22,6 @@
     "configurations.script.savePath.title": "Script path",
     "configurations.script.savePath.description": "Set the path to the save script notebook directory. e.g. `c:\\script` if not set, it will default to the `script` folder in the expansion path",
     "commands.delete": "Delete",
-    "serialPortTerminal": "串口终端"
+    "commands.clearTerminal": "Clear Terminal",
+    "serialPortTerminal": "Serial Port Terminal"
 }
