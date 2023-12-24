@@ -10,17 +10,16 @@ This is a simple terminal interaction serial extension for vscode, it is still a
 
 ### open a serial port
 
-![](assets/gif/open.gif)
+![open.gif](https://s2.loli.net/2023/12/24/cF2y9Rpo8ixEQVG.gif)
 
 ### add new configuration
-![](assets/gif/config.gif)
+![config.gif](https://s2.loli.net/2023/12/24/UR6txaOokhm3nYf.gif)
 
 ### start to save the log
-
-![](assets/gif/log.gif)
+![log.gif](https://s2.loli.net/2023/12/24/NA1ldMSxO4qF5m6.gif)
 
 ### using the script notebook
-![](assets/gif/script.gif)
+![script.gif](https://s2.loli.net/2023/12/24/gsVy3Up4jfPxKE2.gif)
 
 ---
 

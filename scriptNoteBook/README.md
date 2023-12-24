@@ -6,7 +6,7 @@
 
 ## Tutorials
 
-![](assets/scrnb.gif)
+![scrnb.gif](https://s2.loli.net/2023/12/24/yvT37ZPViDSBA25.gif)
 
 1. Install this extension
 
