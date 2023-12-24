@@ -1,4 +1,4 @@
-# serial terminal extension for visual studio code 
+# serial terminal extension for visual studio code
 
 ---
 
@@ -10,9 +10,15 @@ This is a simple terminal interaction serial extension for vscode, it is still a
 
 ![](assets/gif/open.gif)
 
+### add new configuration
+![](assets/gif/config.gif)
+
 ### start to save the log
 
 ![](assets/gif/log.gif)
+
+### using the script notebook
+![](assets/gif/script.gif)
 
 ---
 
@@ -24,10 +30,12 @@ This is a simple terminal interaction serial extension for vscode, it is still a
 
 - [x] Configuring a customised open baud rate
 
-- [x] Very nice script notebook features
+- [x] Nice script notebook
+
+- [x] Time stamp
+
+- [x] Add configurable items
 
 - [ ] Serial port to send and display hex data
 
-- [ ] Time stamp
-
-- [ ] Add configurable items
+- [ ] Support for X/Y/Zmodem protocols
