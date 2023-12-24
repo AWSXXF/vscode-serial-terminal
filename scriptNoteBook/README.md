@@ -4,7 +4,7 @@
 
 ## Tutorials
 
-![scrnb.gif](https://github.com/AWSXXF/vscode-serial-terminal/tree/main/scriptNoteBook/assets/scrnb.gif)
+![](assets/scrnb.gif)
 
 1. Install this extension
 
