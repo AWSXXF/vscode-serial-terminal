@@ -8,17 +8,17 @@ This is a simple terminal interaction serial extension for vscode, it is still a
 
 ### open a serial port
 
-![](assets/gif/open.gif)
+![open.gif](https://github.com/AWSXXF/vscode-serial-terminal/tree/main/serialTerminal/assets/gif/open.gif)
 
 ### add new configuration
-![](assets/gif/config.gif)
+![config.gif](https://github.com/AWSXXF/vscode-serial-terminal/tree/main/serialTerminal/assets/gif/config.gif)
 
 ### start to save the log
 
-![](assets/gif/log.gif)
+![log.gif](https://github.com/AWSXXF/vscode-serial-terminal/tree/main/serialTerminal/assets/gif/log.gif)
 
 ### using the script notebook
-![](assets/gif/script.gif)
+![script.gif](https://github.com/AWSXXF/vscode-serial-terminal/tree/main/serialTerminal/assets/gif/script.gif)
 
 ---
 
