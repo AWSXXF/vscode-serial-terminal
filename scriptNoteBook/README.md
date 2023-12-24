@@ -1,5 +1,7 @@
 # Notebook with support for vscode terminal
 
+[HomePage](https://github.com/AWSXXF/vscode-serial-terminal/blob/main/scriptNoteBook/README.md)
+
 ---
 
 ## Tutorials

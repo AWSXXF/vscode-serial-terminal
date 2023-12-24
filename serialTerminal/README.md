@@ -1,5 +1,7 @@
 # serial terminal extension for visual studio code
 
+[HomePage](https://github.com/AWSXXF/vscode-serial-terminal/blob/main/serialTerminal/README.md)
+
 ---
 
 This is a simple terminal interaction serial extension for vscode, it is still a simple prototype, I will make it the best serial extension for vscode in the future.
