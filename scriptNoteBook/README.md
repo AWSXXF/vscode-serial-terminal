@@ -4,9 +4,11 @@
 
 ## Tutorials
 
+![](assets/scrnb.gif)
+
 1. Install this extension
 
-2. Create and open a file with the srcnb extension
+2. Create and open a file with the `.srcnb` extension
 
 3. Add a code block and fill in the code
 
