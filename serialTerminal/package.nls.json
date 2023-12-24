@@ -14,7 +14,7 @@
     "commands.openLogConfigaration": "open log setting",
     "commands.openScriptConfigaration": "Open script notebook setting",
     "commands.createScriptNotebook": "New script notebook",
-    "configurations.serialPort.boudRate.description": "The `baud rate` option when opening the serial port, you can add a `custom baud rate` here",
+    "configurations.serialPort.configurations.description": "Configuration options when opening the serial port, you can add other options here. \neg.\n `115200n81`\n - Baud rate `115200`\n - No parity bit `n(n|e|o)`, default is `n`\n - Data bits `8(5|6|7|8)`bit, default is `8`\n - Stop bit `1(1|1.5|2)`bit, default is `1`",
     "configurations.log.savePath.title": "Log path",
     "configurations.log.savePath.description": "Set the path to the save log directory. e.g. `c:\\log` if not set, it will default to the `log` folder in the expansion path",
     "configurations.log.defaultAddingTimeStamp.title": "Add timestamps by default",

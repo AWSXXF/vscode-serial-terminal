@@ -14,7 +14,7 @@
     "commands.openLogConfigaration": "打开日志设置",
     "commands.openScriptConfigaration": "打开脚本notebook设置",
     "commands.createScriptNotebook": "新的脚本notebook",
-    "configurations.serialPort.boudRate.description": "打开串口时的`波特率`选项，你可以在这里添加`自定义波特率`",
+    "configurations.serialPort.configurations.description": "打开串行端口时的配置选项，您可以在此添加其他选项。\n例如 `115200n81`\n - 波特率 `115200`\n - 无奇偶校验位 `n(n|e|o)`，默认为 `n`\n - 数据位`8(5|6|7|8)`bit，默认为`8`\n - 停止位 `1(1|1.5|2)`bit, 默认为 `1`",
     "configurations.log.savePath.title": "日志路径",
     "configurations.log.savePath.description": "设置保存日志目录的路径，例如：`c:\\log`，如果不设置，它将默认为扩展路径中的`log`文件夹",
     "configurations.script.savePath.title": "脚本保存路径",

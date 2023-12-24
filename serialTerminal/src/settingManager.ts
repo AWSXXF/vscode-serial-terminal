@@ -2,12 +2,25 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as os from 'os';
 
-function getBoundRates(): Array<number> {
-    return vscode.workspace.getConfiguration().get('SerialTerminal.serial port.Boud Rate') as Array<number>;
+const serialPortSettingId = 'SerialTerminal.serial port';
+const logSettingId = 'SerialTerminal.log';
+const scriptSettingId = 'SerialTerminal.script';
+
+
+const configurationsReg: { [Symbol.match](string: string): RegExpMatchArray | null; } = /^(\d+)(n|e|o|)(5|6|7|8|)(1|1.5|2|)$/;
+const configurationsSettingId = 'SerialTerminal.serial port.configurations';
+const logSavePathSettingId = 'SerialTerminal.log.savePath';
+const scriptSavePathSettingId = 'SerialTerminal.script.savePath';
+const logDefaultAddingTimeStampSettingId = 'SerialTerminal.log.defaultAddingTimeStamp';
+
+
+function getConfigurations(): Array<string> {
+    let configurationsStrings = vscode.workspace.getConfiguration().get(configurationsSettingId) as Array<string>;
+    return configurationsStrings.filter(value => value.match(configurationsReg));
 }
 
 function getLogDirUri(): vscode.Uri {
-    let folderUri = getSettingFolderOrSetDefault('SerialTerminal.log.savePath', vscode.Uri.joinPath(
+    let folderUri = getSettingFolderOrSetDefault(logSavePathSettingId, vscode.Uri.joinPath(
         vscode.Uri.file(os.homedir()),
         "serialTerminal",
         'terminalLog'
@@ -16,7 +29,7 @@ function getLogDirUri(): vscode.Uri {
 }
 
 function getScriptDirUri(): vscode.Uri {
-    return getSettingFolderOrSetDefault('SerialTerminal.script.savePath', vscode.Uri.joinPath(
+    return getSettingFolderOrSetDefault(scriptSavePathSettingId, vscode.Uri.joinPath(
         vscode.Uri.file(os.homedir()),
         "serialTerminal",
         'scriptNoteBook'
@@ -24,7 +37,7 @@ function getScriptDirUri(): vscode.Uri {
 }
 
 function getLogDefaultAddingTimeStamp(): boolean {
-    return getSettingOrSetDefault('SerialTerminal.log.defaultAddingTimeStamp', false);
+    return getSettingOrSetDefault(logDefaultAddingTimeStampSettingId, false);
 }
 
 function getSettingFolderOrSetDefault(section: string, defaultName: string): vscode.Uri {
@@ -49,7 +62,12 @@ function getSettingOrSetDefault<T>(section: string, defaultValue: T): T {
 }
 
 export {
-    getBoundRates,
+    serialPortSettingId,
+    logSettingId,
+    scriptSettingId,
+    configurationsReg,
+    configurationsSettingId,
+    getConfigurations,
     getLogDirUri,
     getScriptDirUri,
     getLogDefaultAddingTimeStamp,

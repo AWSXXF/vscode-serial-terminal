@@ -1,21 +1,22 @@
 import * as vscode from 'vscode';
-import { ISerialPortTerminal, SerialPortTerminal, terminalNamePrefix } from './serialPortTerminal';
+import { ISerialPortTerminal, SerialPortConfiguration, SerialPortTerminal, terminalNamePrefix } from './serialPortTerminal';
 import { TerminalProfile } from 'vscode';
 
 const serialPortTerminalManager = new (class {
     private serialPortTerminals = new Map<string, ISerialPortTerminal>();
-    async showSerialPortTerminal(portPath: string, baudRate: number, closeCallback?: () => void): Promise<void> {
+    async showSerialPortTerminal(portPath: string, cfg: SerialPortConfiguration, closeCallback?: () => void): Promise<void> {
         var exist = this.getFromPortPath(portPath);
         if (exist) {
-            if (exist.serialport.baudRate !== baudRate) {
-                exist.serialport.update({ baudRate: baudRate });
+            /* Actually, the whole OPTION should be judged here, but the only interface parameter for update is baudrate, so that's it! */
+            if (exist.serialport.baudRate !== cfg.baudrate) {
+                exist.serialport.update({ baudRate: cfg.baudrate });
             }
             if (!exist.serialport.isOpen) {
                 exist.open();
             }
             exist.terminal.show();
         } else {
-            var serialPortTerminal = await SerialPortTerminal.new(portPath, baudRate);
+            var serialPortTerminal = await SerialPortTerminal.new(portPath, cfg);
             serialPortTerminal.setCloseCallback(() => {
                 this.remove(serialPortTerminal.terminal.name);
             });

@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 
-import { pickBoudRate, pickSerialPort, updateSerialPortProvider } from './serialPortView';
+import { pickConfiguration, pickSerialPort, updateSerialPortProvider } from './serialPortView';
 import { serialPortTerminalManager } from "./serialPortTerminalManager";
 import { setSerialPortTernimalRecordingLog } from './contextManager';
 import { l10n } from 'vscode';
-import { getLogDirUri, getScriptDirUri } from './settingManager';
+import { getLogDirUri, getScriptDirUri, logSettingId, scriptSettingId, serialPortSettingId } from './settingManager';
 
 function registerCommands(context: vscode.ExtensionContext) {
     context.subscriptions.push(
@@ -32,19 +32,19 @@ function registerCommands(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand(
             "serialport.openSerialPortConfigaration",
-            () => { vscode.commands.executeCommand("workbench.action.openSettings", "SerialTerminal.serial port"); })
+            () => { vscode.commands.executeCommand("workbench.action.openSettings", serialPortSettingId); })
     );
 
     context.subscriptions.push(
         vscode.commands.registerCommand(
             "serialport.openLogConfigaration",
-            () => { vscode.commands.executeCommand("workbench.action.openSettings", "SerialTerminal.log"); })
+            () => { vscode.commands.executeCommand("workbench.action.openSettings", logSettingId); })
     );
 
     context.subscriptions.push(
         vscode.commands.registerCommand(
             "serialport.openScriptConfigaration",
-            () => { vscode.commands.executeCommand("workbench.action.openSettings", "SerialTerminal.script"); })
+            () => { vscode.commands.executeCommand("workbench.action.openSettings", scriptSettingId); })
     );
 
     context.subscriptions.push(
@@ -122,7 +122,7 @@ function registerCommands(context: vscode.ExtensionContext) {
 }
 
 async function openSerialPort(context?: any) {
-    let portPath, boudRate;
+    let portPath, cfg;
     if (!context) {
         portPath = await pickSerialPort();
     } else {
@@ -134,10 +134,10 @@ async function openSerialPort(context?: any) {
         existTerminal.terminal.show();
         return;
     }
-    boudRate = await pickBoudRate();
+    cfg = await pickConfiguration();
 
-    if (portPath && boudRate) {
-        await serialPortTerminalManager.showSerialPortTerminal(portPath, boudRate);
+    if (portPath && cfg) {
+        await serialPortTerminalManager.showSerialPortTerminal(portPath, cfg);
     }
 }
 

@@ -20,5 +20,6 @@
   "ProductId": "产品ID",
   "SerialNumber": "序列号",
   "PnpId": "即插即用ID",
-  "LocationId": "硬件路径ID"
+  "LocationId": "硬件路径ID",
+  "Adding a new serial port configuration": "添加新的串口配置"
 }

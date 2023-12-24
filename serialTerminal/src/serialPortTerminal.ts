@@ -5,7 +5,7 @@ import * as colors from 'colors';
 import * as fs from 'fs';
 import { SerialPort } from "serialport";
 import { getLogDefaultAddingTimeStamp, getLogDirUri } from "./settingManager";
-import { pickBoudRate, pickSerialPort } from "./serialPortView";
+import { SerialPortConfiguration, pickConfiguration, pickSerialPort } from "./serialPortView";
 
 const terminalNamePrefix = "PORT: ";
 
@@ -92,11 +92,30 @@ class SerialPortTerminal implements ISerialPortTerminal {
         );
     }
 
-    static async new(path: string, baudRate: number): Promise<ISerialPortTerminal> {
+    static async new(portPath: string, cfg: SerialPortConfiguration): Promise<ISerialPortTerminal> {
         return new Promise<SerialPortTerminal>((resolve, reject) => {
-            let serialPort = new SerialPort({ path: path, baudRate: baudRate }, () => {
+            let serialPort: SerialPort;
+            let openCallBack = () => {
                 resolve(new SerialPortTerminal(serialPort));
-            });
+            };
+
+            /* bug: If dataBits is assigned to undefined, opening the serial port fails, so... */
+            if (cfg.dataBits) {
+                serialPort = new SerialPort({
+                    path: portPath,
+                    baudRate: cfg.baudrate,
+                    parity: cfg.parity,
+                    dataBits: cfg.dataBits,
+                    stopBits: cfg.stopBits,
+                }, openCallBack);
+            } else {
+                serialPort = new SerialPort({
+                    path: portPath,
+                    baudRate: cfg.baudrate,
+                    parity: cfg.parity,
+                    stopBits: cfg.stopBits,
+                }, openCallBack);
+            }
         });
     }
 
@@ -104,13 +123,32 @@ class SerialPortTerminal implements ISerialPortTerminal {
         return new Promise<ISerialPortTerminal>(async (resolve, reject) => {
             const portPath = await pickSerialPort();
             if (!portPath) { reject(); return; }
-            const baudRate = await pickBoudRate();
-            if (!baudRate) { reject(); return; }
-            let serialPort = new SerialPort({ path: portPath, baudRate: baudRate }, () => {
+            const cfg = await pickConfiguration();
+            if (!cfg) { reject(); return; }
+            let serialPort: SerialPort;
+            let openCallBack = () => {
                 const serialPortTerminal = new SerialPortTerminal(serialPort, true);
                 if (serialPortTerminal.terminal.options) { resolve(serialPortTerminal); }
                 else { reject(); }
-            });
+            };
+
+            /* bug: If dataBits is assigned to undefined, opening the serial port fails, so... */
+            if (cfg.dataBits) {
+                serialPort = new SerialPort({
+                    path: portPath,
+                    baudRate: cfg.baudrate,
+                    parity: cfg.parity,
+                    dataBits: cfg.dataBits,
+                    stopBits: cfg.stopBits,
+                }, openCallBack);
+            } else {
+                serialPort = new SerialPort({
+                    path: portPath,
+                    baudRate: cfg.baudrate,
+                    parity: cfg.parity,
+                    stopBits: cfg.stopBits,
+                }, openCallBack);
+            }
         });
     }
 
@@ -205,6 +243,7 @@ class SerialPortTerminal implements ISerialPortTerminal {
 }
 
 export {
+    SerialPortConfiguration,
     ISerialPortTerminal,
     SerialPortTerminal,
     listSerialPort,
